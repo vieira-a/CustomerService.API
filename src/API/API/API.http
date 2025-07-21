@@ -1,6 +1,19 @@
-@API_HostAddress = http://localhost:5056
+@API_HostAddress = http://localhost:5056/api/v1
 
-GET {{API_HostAddress}}/weatherforecast/
+POST {{API_HostAddress}}/customers/
+Content-Type: application/json
 Accept: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@contoso.com",
+  "address": {
+    "street": "Street John",
+    "city": "São Paulo",
+    "state": "SP",
+    "zipCode": "12345-678",
+    "country": "Brasil"
+  }
+}
 
 ###
