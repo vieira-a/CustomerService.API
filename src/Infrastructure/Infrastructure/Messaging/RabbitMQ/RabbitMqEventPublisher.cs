@@ -14,6 +14,7 @@ public class RabbitMqEventPublisher : IEventPublisher
     
     public Task Publish<TEvent>(TEvent eventPub) where TEvent : class
     {
+        Console.WriteLine("Publishing event");
         return _publishEndpoint.Publish(eventPub);
     }
 }

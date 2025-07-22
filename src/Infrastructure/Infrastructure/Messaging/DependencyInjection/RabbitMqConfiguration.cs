@@ -1,9 +1,11 @@
 using System.Reflection;
 using Application.Interfaces;
 using Infrastructure.Messaging.RabbitMQ;
+using Infrastructure.Messaging.RabbitMQ.Settings;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Shared.Events;
 
 namespace Infrastructure.Messaging.DependencyInjection;
@@ -12,6 +14,7 @@ public static class RabbitMqConfiguration
 {
     public static IServiceCollection AddMessaging(this IServiceCollection services, IConfiguration configuration)
     {
+        services.Configure<RabbitMqSettings>(configuration.GetSection("RabbitMq"));
         services.AddMassTransit(x =>
         {
             x.SetKebabCaseEndpointNameFormatter();
@@ -19,10 +22,12 @@ public static class RabbitMqConfiguration
 
             x.UsingRabbitMq((context, cfg) =>
             {
-                cfg.Host(configuration["RabbitMq:Host"], h =>
+                var rabbitMqSettings = context.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
+                
+                cfg.Host(rabbitMqSettings.Host, h =>
                 {
-                    h.Username(configuration["RabbitMq:Username"]!);
-                    h.Password(configuration["RabbitMq:Password"]!);
+                    h.Username(rabbitMqSettings.Username);
+                    h.Password(rabbitMqSettings.Password);
                 });
 
                 cfg.ConfigureEndpoints(context);
