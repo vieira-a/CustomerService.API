@@ -1,4 +1,4 @@
-using Application.UseCases.CreateCustomer;
+using Application.UseCases.Customers.Create;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application.DependencyInjection;

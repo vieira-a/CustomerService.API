@@ -1,6 +1,6 @@
 namespace Domain.Entities;
 
-public class Address : Entity
+public sealed class Address : Entity
 {
     public string Street { get; private set; }
     
@@ -12,9 +12,7 @@ public class Address : Entity
     
     public string Country { get; private set; }
 
-    private Address () {}
-
-    public Address(string street, string city, string state, string zipCode, string country)
+    private Address(string street, string city, string state, string zipCode, string country)
     {
         Street = street;
         City = city;

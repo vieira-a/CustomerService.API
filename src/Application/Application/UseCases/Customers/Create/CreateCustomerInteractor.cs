@@ -1,7 +1,9 @@
+using Application.UseCases.Customers.Create.Input;
+using Application.UseCases.Customers.Create.Output;
 using Domain.Entities;
 using Domain.Repositories;
 
-namespace Application.UseCases.CreateCustomer;
+namespace Application.UseCases.Customers.Create;
 
 public class CreateCustomerInteractor : ICreateCustomerUseCase 
 {

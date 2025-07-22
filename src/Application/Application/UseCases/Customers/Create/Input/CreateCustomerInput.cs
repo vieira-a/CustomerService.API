@@ -1,4 +1,4 @@
-namespace Application.UseCases.CreateCustomer;
+namespace Application.UseCases.Customers.Create.Input;
 
 public record CreateCustomerInput(string Name, string Email, AddressInput? Address);
     

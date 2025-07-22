@@ -1,6 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
 using Application.DependencyInjection;
 using Infrastructure.DependencyInjection;
-using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 

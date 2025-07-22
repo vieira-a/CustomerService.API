@@ -2,11 +2,11 @@ namespace Infrastructure.Persistence.Models;
 
 public sealed class CustomerModel : BaseModel
 {
-    public Guid CustomerId { get; set; }
+    public Guid CustomerId { get; init; }
     
-    public string? Name { get; set; }
+    public required string Name { get; init; }
     
-    public string? Email { get; set; }
+    public required string Email { get; init; }
     
-    public ICollection<AddressModel>? Addresses { get; set; } = new List<AddressModel>();
+    public ICollection<AddressModel>? Addresses { get; init; } = new List<AddressModel>();
 }

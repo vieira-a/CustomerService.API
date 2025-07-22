@@ -18,11 +18,6 @@ public class CustomerRepository : ICustomerRepository
     {
         var customerModel = CustomerMapper.MapFromDomain(customer);
         
-        foreach(var a in customerModel.Addresses)
-        {
-            Console.WriteLine($"AddressModel Street: {a.Street}, City: {a.City}");
-        }
-        
         _context.Customers.Add(customerModel);
         await _context.SaveChangesAsync();
     }

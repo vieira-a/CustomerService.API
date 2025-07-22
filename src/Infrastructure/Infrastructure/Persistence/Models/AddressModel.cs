@@ -2,19 +2,19 @@ namespace Infrastructure.Persistence.Models;
 
 public sealed class AddressModel : BaseModel
 {
-    public Guid AddressId { get; set; }
+    public Guid AddressId { get; init; }
     
-    public string? Street { get; set; }
+    public required string Street { get; init; }
     
-    public string? City { get; set; }
+    public required string City { get; init; }
     
-    public string? State { get; set; }
+    public required string State { get; init; }
     
-    public string? ZipCode { get; set; }
+    public required string ZipCode { get; init; }
     
-    public string? Country { get; set; }
+    public required string Country { get; init; }
     
-    public Guid? CustomerId { get; set; }
+    public required Guid CustomerId { get; init; }
     
-    public CustomerModel? Customer { get; set; }
+    public CustomerModel? Customer { get; init; }
 }

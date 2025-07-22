@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
-using Application.UseCases.CreateCustomer;
+using Application.UseCases.Customers.Create.Input;
 
 namespace API.Controllers.Requests;
 
@@ -10,12 +10,12 @@ public sealed class CreateCustomerRequest
     [DataMember]
     [JsonInclude]
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public required string Name { get; set; }
     
     [DataMember]
     [JsonInclude]
     [JsonPropertyName("email")]
-    public string Email { get; set; }
+    public required string Email { get; set; }
     
     [DataMember]
     [JsonInclude]

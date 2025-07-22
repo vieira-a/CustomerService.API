@@ -1,6 +1,6 @@
 namespace Domain.Entities;
 
-public class Customer : Entity
+public sealed class Customer : Entity
 {
     public string Name { get; private set; }
     
@@ -10,8 +10,6 @@ public class Customer : Entity
     
     public IReadOnlyCollection<Address> Addresses => _addresses.AsReadOnly();
     
-    private Customer () {}
-
     private Customer(string name, string email)
     {
         Name = name;

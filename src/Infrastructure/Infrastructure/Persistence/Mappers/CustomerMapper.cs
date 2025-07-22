@@ -3,7 +3,7 @@ using Infrastructure.Persistence.Models;
 
 namespace Infrastructure.Persistence.Mappers;
 
-public class CustomerMapper
+public abstract class CustomerMapper
 {
     public static CustomerModel MapFromDomain(Customer customer)
     {

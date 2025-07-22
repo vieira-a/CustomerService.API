@@ -1,5 +1,5 @@
 using API.Controllers.Requests;
-using Application.UseCases.CreateCustomer;
+using Application.UseCases.Customers.Create;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.V1;
