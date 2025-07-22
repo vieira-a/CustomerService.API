@@ -399,3 +399,4 @@ FodyWeavers.xsd
 *.idea
 *.sln.iml
 appsettings.Development.json
+.DS_Store
