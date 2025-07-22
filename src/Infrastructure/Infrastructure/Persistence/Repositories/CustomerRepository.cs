@@ -21,4 +21,10 @@ public class CustomerRepository : ICustomerRepository
         _context.Customers.Add(customerModel);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<Customer?> FindByIdAsync(Guid customerId)
+    {
+        var customer = await _context.Customers.FindAsync(customerId);
+        return customer == null ? null : CustomerMapper.MapFromEntity(customer);
+    }
 }

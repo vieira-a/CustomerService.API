@@ -24,4 +24,9 @@ public abstract class CustomerMapper
             }).ToList()
         };
     }
+
+    public static Customer? MapFromEntity(CustomerModel customer)
+    {
+        return Customer.Restore(customer.CustomerId, customer.Name, customer.Email);
+    }
 }

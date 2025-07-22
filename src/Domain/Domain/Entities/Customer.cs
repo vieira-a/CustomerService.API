@@ -28,7 +28,7 @@ public sealed class Customer : Entity
        return new Customer(name, email);
     }
 
-    public static Customer Restore(Guid id, string name, string email)
+    public static Customer? Restore(Guid id, string name, string email)
     {
         return new Customer(id, name, email);
     }

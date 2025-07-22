@@ -17,3 +17,7 @@ Accept: application/json
 }
 
 ###
+@CustomerId = 87E1FED1-6872-4B80-8D6D-6D518A6D0740
+
+GET {{API_HostAddress}}/customers/{{CustomerId}}
+Content-Type: application/json
