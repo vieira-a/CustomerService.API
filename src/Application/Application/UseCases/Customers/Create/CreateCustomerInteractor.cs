@@ -3,7 +3,7 @@ using Application.UseCases.Customers.Create.Input;
 using Application.UseCases.Customers.Create.Output;
 using Domain.Entities;
 using Domain.Repositories;
-using Shared.Events;
+using Shared.Messaging.Events;
 
 namespace Application.UseCases.Customers.Create;
 

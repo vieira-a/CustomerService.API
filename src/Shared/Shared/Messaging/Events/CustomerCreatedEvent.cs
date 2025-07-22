@@ -1,4 +1,4 @@
-namespace Shared.Events;
+namespace Shared.Messaging.Events;
 
 public class CustomerCreatedEvent
 {

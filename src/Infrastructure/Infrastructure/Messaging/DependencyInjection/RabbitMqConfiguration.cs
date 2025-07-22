@@ -6,7 +6,6 @@ using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Shared.Events;
 
 namespace Infrastructure.Messaging.DependencyInjection;
 
