@@ -32,6 +32,11 @@ public sealed class Customer : Entity
     {
         return new Customer(id, name, email);
     }
+
+    public void UpdateName (string newName)
+    {
+        Name = newName;
+    }
     
     public void AddAddress(Address address)
     {

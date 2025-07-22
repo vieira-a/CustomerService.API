@@ -6,4 +6,5 @@ public interface ICustomerRepository
 {
     Task CreateAsync(Customer customer);
     Task<Customer?> FindByIdAsync(Guid customerId);
+    Task UpdateAsync(Customer customer);
 }

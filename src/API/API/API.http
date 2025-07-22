@@ -21,3 +21,14 @@ Accept: application/json
 
 GET {{API_HostAddress}}/customers/{{CustomerId}}
 Content-Type: application/json
+
+###
+
+PUT {{API_HostAddress}}/customers/{{CustomerId}}
+Content-Type: application/json
+
+{
+  "name": "John"
+}
+
+###

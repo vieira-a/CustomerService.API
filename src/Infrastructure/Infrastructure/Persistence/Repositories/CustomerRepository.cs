@@ -27,4 +27,13 @@ public class CustomerRepository : ICustomerRepository
         var customer = await _context.Customers.FindAsync(customerId);
         return customer == null ? null : CustomerMapper.MapFromEntity(customer);
     }
+
+    public async Task UpdateAsync(Customer customer)
+    {
+        var customerModel = await _context.Customers.FindAsync(customer.Id);
+        if (customerModel == null) return;
+        
+        _context.Entry(customerModel).CurrentValues.SetValues(customer);
+        await _context.SaveChangesAsync();
+    }
 }

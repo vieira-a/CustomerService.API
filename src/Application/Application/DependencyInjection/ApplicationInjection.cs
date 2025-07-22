@@ -1,5 +1,6 @@
 using Application.UseCases.Customers.Create;
 using Application.UseCases.Customers.Find;
+using Application.UseCases.Customers.Update;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application.DependencyInjection;
@@ -10,6 +11,8 @@ public static class ApplicationInjection
     {
         services.AddScoped<ICreateCustomerUseCase, CreateCustomerInteractor>();    
         services.AddScoped<IFindCustomerUseCase, FindCustomerInteractor>(); 
+        services.AddScoped<IUpdateCustomerUseCase, UpdateCustomerInteractor>(); 
+
         return services;
     }
     
