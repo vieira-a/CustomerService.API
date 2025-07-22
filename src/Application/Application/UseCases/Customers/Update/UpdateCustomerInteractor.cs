@@ -20,7 +20,7 @@ public class UpdateCustomerInteractor : IUpdateCustomerUseCase
         if (customer == null)
             throw new Exception("Customer not found");
 
-        customer.UpdateName(input.Name);
+        if (input != null) customer.UpdateName(input.Name);
         await _customerRepository.UpdateAsync(customer);
     }
 }
