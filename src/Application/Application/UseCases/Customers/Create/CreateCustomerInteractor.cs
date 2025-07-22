@@ -20,17 +20,16 @@ public class CreateCustomerInteractor : ICreateCustomerUseCase
         
         if (input.Address != null)
         {
-            var address = Address.Create(
-                input.Address.Street, 
-                input.Address.City, 
-                input.Address.State,
-                input.Address.ZipCode, 
-                input.Address.Country);  
-            
+            var address = CreateAddress(input.Address); 
             customer.AddAddress(address);
         }
         
         await _repository.CreateAsync(customer);
         return new CreateCustomerOutput(customer.Id, customer.Name, customer.Email);
+    }
+
+    private static Address CreateAddress(AddressInput input)
+    {
+        return Address.Create(input.Street, input.City, input.State, input.ZipCode, input.Country);
     }
 }
