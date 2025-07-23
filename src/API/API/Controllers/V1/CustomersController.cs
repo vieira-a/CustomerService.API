@@ -1,4 +1,5 @@
 using API.Controllers.Requests;
+using API.Presenter.Responses;
 using Application.UseCases.Customers.Create;
 using Application.UseCases.Customers.Find;
 using Application.UseCases.Customers.Update;
@@ -28,7 +29,7 @@ public sealed class CustomersController : ControlerBase
         var input = request.ToInput();
         var result = await _createCustomerInteractor.ExecuteAsync(input);
 
-        return CreatedAtAction(nameof(CreateAsyc), new { id = result.CustomerId }, result);
+        return result.ToResponse();
     }
 
     [HttpGet("{id:guid}")]

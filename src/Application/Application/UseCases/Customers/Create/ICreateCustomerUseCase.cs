@@ -5,5 +5,5 @@ namespace Application.UseCases.Customers.Create;
 
 public interface ICreateCustomerUseCase
 {
-    Task<CreateCustomerOutput> ExecuteAsync(CreateCustomerInput input);
+    Task<Result<CreateCustomerOutput>> ExecuteAsync(CreateCustomerInput input);
 }
