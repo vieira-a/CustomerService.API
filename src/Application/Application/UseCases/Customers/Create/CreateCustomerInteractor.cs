@@ -6,7 +6,9 @@ using Application.UseCases.Customers.Create.Output;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Repositories;
+using Shared.Enums;
 using Shared.Messaging.Events;
+using Shared.Utils;
 
 namespace Application.UseCases.Customers.Create;
 

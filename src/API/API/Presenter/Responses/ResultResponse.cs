@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Shared.Enums;
+using Shared.Utils;
 
 namespace API.Presenter.Responses;
 
@@ -12,27 +14,16 @@ public static class ResultResponse
         return result.ErrorType switch
         {
             ErrorType.NotFound => new NotFoundObjectResult(new { message = result.ErrorMessage }),
-
-            ErrorType.Validation => new BadRequestObjectResult(
-                new ValidationProblemDetails
-                {
-                    Title = result.ErrorMessage,
-                    Status = StatusCodes.Status400BadRequest,
-                    Detail = "Ocorreram um ou mais erros de validação.",
-                    Errors = result.ValidationErrors != null
-                        ? result.ValidationErrors.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToArray())
-                        : new Dictionary<string, string[]>()
-                }),
-
-            _ => new ObjectResult(new ProblemDetails
+            ErrorType.Validation => new BadRequestObjectResult(new ValidationProblemDetails
             {
-                Title = "Ocorreu um erro inesperado.",
-                Status = StatusCodes.Status500InternalServerError,
-                Detail = result.ErrorMessage,
-            })
-            {
-                StatusCode = StatusCodes.Status500InternalServerError
-            }
+                Title = result.ErrorMessage!,
+                Status = StatusCodes.Status400BadRequest,
+                Detail = "Ocorreram um ou mais erros de validação.",
+                Errors = result.ValidationErrors != null
+                    ? result.ValidationErrors.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToArray())
+                    : new Dictionary<string, string[]>()
+            }),
+            _ => throw new InvalidOperationException("Ocorreu um erro inesperado.")
         };
     }
 }
