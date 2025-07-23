@@ -33,8 +33,13 @@ public class CreateCustomerInteractor : ICreateCustomerUseCase
 
             if (input.Address != null)
             {
-                var address = CreateAddress(input.Address);
-                customer.AddAddress(address);
+                var addressResult = CreateAddress(input.Address);
+
+                if (addressResult.IsFailure)
+                    return Result<CreateCustomerOutput>.FailValidation(addressResult.ValidationErrors!);
+                
+                var address = addressResult.Value;
+                customer.AddAddress(address!);
             }
 
             var result = await _repository.CreateAsync(customer);
@@ -61,8 +66,17 @@ public class CreateCustomerInteractor : ICreateCustomerUseCase
         }
     }
 
-    private static Address CreateAddress(AddressInput input)
+    private static Result<Address> CreateAddress(AddressInput input)
     {
-        return Address.Create(input.Street, input.City, input.State, input.ZipCode, input.Country);
+        try
+        {
+            var result = Address.Create(input.Street, input.City, input.State, input.ZipCode, input.Country);
+            return Result<Address>.Success(result);
+        }
+        catch (DomainValidationException ex)
+        {
+            return Result<Address>.FailValidation(
+                new Dictionary<string, List<string>>(ex.ValidationErrors));
+        }
     }
 }

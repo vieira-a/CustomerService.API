@@ -23,7 +23,10 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exceção não manipulada.");
+            _logger.LogError(ex,
+                "Exceção não manipulada. Caminho: {Path}, Método: {Method}",
+                httpContext.Request.Path,
+                httpContext.Request.Method);
 
             await HandleExceptionAsync(httpContext, ex);
         }
@@ -33,7 +36,7 @@ public class ExceptionHandlingMiddleware
     {
         context.Response.ContentType = "application/json";
 
-        var statusCode = (int)HttpStatusCode.InternalServerError;
+        const int statusCode = (int)HttpStatusCode.InternalServerError;
 
         var problemDetails = new ProblemDetails
         {
