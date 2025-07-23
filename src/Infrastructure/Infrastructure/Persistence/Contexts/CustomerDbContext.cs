@@ -37,11 +37,14 @@ public sealed class CustomerDbContext : DbContext
         {
             if (entry.State == EntityState.Added)
             {
-                entry.Entity.Created = DateTime.UtcNow;
+                if(entry.State == default) 
+                    entry.Entity.Created = DateTime.UtcNow;
+                
                 entry.Entity.Modified = DateTime.UtcNow;
             }
             else if (entry.State == EntityState.Modified)
             {
+                entry.Property(x => x.Created).IsModified = false;
                 entry.Entity.Modified = DateTime.UtcNow;
             }
         }
