@@ -1,3 +1,4 @@
+using API.Swagger;
 using Microsoft.AspNetCore.Mvc;
 using Application.DependencyInjection;
 using Infrastructure.DependencyInjection;
@@ -5,7 +6,7 @@ using Infrastructure.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerDocumentation();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -22,8 +23,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerDocumentation();
 }
 
 app.UseHttpsRedirection();
