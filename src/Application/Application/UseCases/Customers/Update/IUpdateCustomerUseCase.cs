@@ -5,5 +5,5 @@ namespace Application.UseCases.Customers.Update;
 
 public interface IUpdateCustomerUseCase
 {
-    Task<Result> ExecuteAsync(Guid customerId, UpdateCustomerInput? input);
+    Task<Result<bool>> ExecuteAsync(Guid customerId, UpdateCustomerInput? input);
 }

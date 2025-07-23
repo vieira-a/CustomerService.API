@@ -20,17 +20,17 @@ public class UpdateCustomerInteractor : IUpdateCustomerUseCase
         _eventPublisher = eventPublisher;
     }
 
-    public async Task<Result> ExecuteAsync(Guid customerId, UpdateCustomerInput? input)
+    public async Task<Result<bool>> ExecuteAsync(Guid customerId, UpdateCustomerInput? input)
     {
         try
         {
             var result = await _customerRepository.FindByIdAsync(customerId);
-        
-            if(result.IsFailure)
-                return Result.Fail(result.ErrorMessage!, result.ErrorType);
-        
+
+            if (result.IsFailure)
+                return Result.FromError<bool>(result);
+            
             if(result.Value == null)
-                return Result.Fail(result.ErrorMessage!, ErrorType.NotFound);
+                return Result<bool>.Fail(result.ErrorMessage!, ErrorType.NotFound);
 
             var customer = result.Value;
         
@@ -44,11 +44,11 @@ public class UpdateCustomerInteractor : IUpdateCustomerUseCase
             };
         
             await _eventPublisher.Publish(customerUpdatedEvent);
-            return Result.Success();
+            return Result<bool>.Success(true);
         }
         catch (DomainValidationException ex)
         {
-            return Result.FailValidation(new Dictionary<string, List<string>>(ex.ValidationErrors));
+            return Result<bool>.FailValidation(new Dictionary<string, List<string>>(ex.ValidationErrors));
         }
     }
 }

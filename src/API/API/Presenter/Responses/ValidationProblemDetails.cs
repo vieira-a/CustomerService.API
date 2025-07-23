@@ -1,14 +1,14 @@
 namespace API.Presenter.Responses;
 
-public class ValidationProblemDetails
+public class ValidationProblemDetails : ProblemDetails
 {
-    public string? Type { get; set; } = "https://tools.ietf.org/html/rfc7231#section-6.6.1";
+    public ValidationProblemDetails()
+    {
+        Title = "Validation Error";
+        Status = StatusCodes.Status400BadRequest;
+        Detail = "Ocorreram um ou mais erros de validação.";
+        Errors = new Dictionary<string, string[]>();
+    }
     
-    public string Title { get; set; } = "Validation Error";
-    
-    public int Status { get; set; } = StatusCodes.Status400BadRequest;
-    
-    public string Detail { get; set; } = "Ocorreram um ou mais erros de validação.";
-    
-    public Dictionary<string, string[]> Errors { get; set; } = new();
+    public sealed override Dictionary<string, string[]>? Errors { get; set; }
 }

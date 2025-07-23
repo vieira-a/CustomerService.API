@@ -23,7 +23,10 @@ public class FindCustomerInteractor : IFindCustomerUseCase
             
             if(result.IsFailure) 
                 return Result<FindCustomerOutput?>.Fail(result.ErrorMessage!, result.ErrorType ?? ErrorType.Unknown);
-
+            
+            if(result.Value == null)
+                return Result<FindCustomerOutput?>.Fail(result.ErrorMessage ?? "Recurso não encontrado.", result.ErrorType ?? ErrorType.NotFound);
+            
             var customerOutput = new FindCustomerOutput(result.Value!.Id, result.Value!.Name, result.Value!.Email);
             return Result<FindCustomerOutput?>.Success(customerOutput);
         }

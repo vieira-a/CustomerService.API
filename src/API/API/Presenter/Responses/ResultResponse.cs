@@ -6,24 +6,31 @@ namespace API.Presenter.Responses;
 
 public static class ResultResponse
 {
-    public static IActionResult ToResponse<T>(this Result<T> result)
+    public static IActionResult ToResponse<T>(this Result<T> result, HttpContext httpContext)
     {
         if (result.IsSuccess)
             return new OkObjectResult(result.Value);
 
+        var instancePath = httpContext.Request.Path;
+
         return result.ErrorType switch
         {
-            ErrorType.NotFound => new NotFoundObjectResult(new { message = result.ErrorMessage }),
+            ErrorType.NotFound => new NotFoundObjectResult(new NotFoundProblemDetails
+            {
+                Instance = instancePath
+            }),
+            
             ErrorType.Validation => new BadRequestObjectResult(new ValidationProblemDetails
             {
-                Title = result.ErrorMessage!,
-                Status = StatusCodes.Status400BadRequest,
-                Detail = "Ocorreram um ou mais erros de validação.",
+                Instance = instancePath,
                 Errors = result.ValidationErrors != null
                     ? result.ValidationErrors.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToArray())
                     : new Dictionary<string, string[]>()
             }),
-            _ => throw new InvalidOperationException("Ocorreu um erro inesperado.")
+            _ => new OkObjectResult(new { message = result.ErrorMessage ?? "Erro interno" })
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
+            }
         };
     }
 }

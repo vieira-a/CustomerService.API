@@ -64,28 +64,28 @@ public class CustomerRepository : ICustomerRepository
         }
     }
 
-    public async Task<Result> UpdateAsync(Customer customer)
+    public async Task<Result<bool>> UpdateAsync(Customer customer)
     {
         try
         {
             var customerModel = await _context.Customers.FindAsync(customer.Id);
             if (customerModel == null) 
-                return Result.Fail("Cliente não encontrado.", ErrorType.NotFound);
+                return Result<bool>.Fail("Cliente não encontrado.", ErrorType.NotFound);
         
             _context.Entry(customerModel).CurrentValues.SetValues(customer);
             await _context.SaveChangesAsync();
             
-            return Result.Success();
+            return Result<bool>.Success(true);
         }
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Erro de banco de dados.");
-            return Result.Fail("Erro de banco de dados.", ErrorType.Database);
+            return Result<bool>.Fail("Erro de banco de dados.", ErrorType.Database);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Erro inesperado.");
-            return Result.Fail("Erro inesperado.", ErrorType.Unknown);
+            return Result<bool>.Fail("Erro inesperado.", ErrorType.Unknown);
         }
         
     }

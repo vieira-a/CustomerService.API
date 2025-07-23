@@ -22,6 +22,11 @@ public class Result
     public static Result Fail(string? errorMessage, ErrorType? errorType) => new(false, errorMessage, errorType);
     public static Result FailValidation(Dictionary<string, List<string>> validationErrors) =>
         new(false, "Erro de validação", Enums.ErrorType.Validation, validationErrors);
+
+    public static Result<T> FromError<T>(Result result)
+    {
+        return Result<T>.Fail(result.ErrorMessage!, result.ErrorType!.Value);
+    }
 }
 
 public class Result<T> : Result
