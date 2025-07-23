@@ -37,7 +37,10 @@ public class CreateCustomerInteractor : ICreateCustomerUseCase
                 customer.AddAddress(address);
             }
 
-            await _repository.CreateAsync(customer);
+            var result = await _repository.CreateAsync(customer);
+
+            if (result.IsFailure)
+                return Result<CreateCustomerOutput>.Fail(result.ErrorMessage!, result.ErrorType ?? ErrorType.Unknown);
 
             var customerCreatedEvent = new CustomerCreatedEvent
             {
@@ -53,12 +56,8 @@ public class CreateCustomerInteractor : ICreateCustomerUseCase
         }
         catch (DomainValidationException ex)
         {
-            return Result<CreateCustomerOutput>.FailValidation(new Dictionary<string, List<string>>(ex.ValidationErrors));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Erro ao criar novo cliente.");
-            return Result<CreateCustomerOutput>.Fail("Erro ao criar novo cliente.", ErrorType.Unknown);
+            return Result<CreateCustomerOutput>.FailValidation(
+                new Dictionary<string, List<string>>(ex.ValidationErrors));
         }
     }
 

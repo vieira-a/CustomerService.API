@@ -2,24 +2,45 @@ using Domain.Entities;
 using Domain.Repositories;
 using Infrastructure.Persistence.Contexts;
 using Infrastructure.Persistence.Mappers;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Shared.Enums;
+using Shared.Utils;
 
 namespace Infrastructure.Persistence.Repositories;
 
 public class CustomerRepository : ICustomerRepository
 {
+    private readonly ILogger <CustomerRepository> _logger;
     private readonly CustomerDbContext  _context;
 
-    public CustomerRepository(CustomerDbContext context)
+    public CustomerRepository(ILogger <CustomerRepository> logger, CustomerDbContext context)
     {
-        this._context = context;
+        _logger = logger;
+        _context = context;
     }
 
-    public async Task CreateAsync(Customer customer)
+    public async Task<Result> CreateAsync(Customer customer)
     {
-        var customerModel = CustomerMapper.MapFromDomain(customer);
+        try
+        {
+            var customerModel = CustomerMapper.MapFromDomain(customer);
+            
+            _context.Customers.Add(customerModel);
+            await _context.SaveChangesAsync();
+            return Result.Success();
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Erro de banco de dados.");
+            return Result.Fail("Erro de banco de dados.", ErrorType.Database);
+        }
         
-        _context.Customers.Add(customerModel);
-        await _context.SaveChangesAsync();
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro inesperado.");
+            return Result.Fail("Erro inesperado.", ErrorType.Unknown);
+        }
     }
 
     public async Task<Customer?> FindByIdAsync(Guid customerId)
