@@ -1,10 +1,13 @@
+using API.Logger;
 using API.Middlewares;
 using API.Swagger;
 using Microsoft.AspNetCore.Mvc;
 using Application.DependencyInjection;
 using Infrastructure.DependencyInjection;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+SerilogConfiguration.ConfigureLogging(builder);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocumentation();
@@ -27,6 +30,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerDocumentation();
 }
 
+app.UseSerilogRequestLogging();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.MapControllers();
