@@ -43,18 +43,50 @@ public class CustomerRepository : ICustomerRepository
         }
     }
 
-    public async Task<Customer?> FindByIdAsync(Guid customerId)
+    public async Task<Result<Customer?>> FindByIdAsync(Guid customerId)
     {
-        var customer = await _context.Customers.FindAsync(customerId);
-        return customer == null ? null : CustomerMapper.MapFromEntity(customer);
+        try
+        {
+            var customer = await _context.Customers.FindAsync(customerId);
+            var mappedCustomer = customer == null ? null : CustomerMapper.MapFromEntity(customer);
+            
+            return Result<Customer?>.Success(mappedCustomer);
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Erro de banco de dados.");
+            return Result<Customer?>.Fail("Erro de banco de dados.", ErrorType.Database);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro inesperado.");
+            return Result<Customer?>.Fail("Erro inesperado.", ErrorType.Unknown);
+        }
     }
 
-    public async Task UpdateAsync(Customer customer)
+    public async Task<Result> UpdateAsync(Customer customer)
     {
-        var customerModel = await _context.Customers.FindAsync(customer.Id);
-        if (customerModel == null) return;
+        try
+        {
+            var customerModel = await _context.Customers.FindAsync(customer.Id);
+            if (customerModel == null) 
+                return Result.Fail("Cliente não encontrado.", ErrorType.NotFound);
         
-        _context.Entry(customerModel).CurrentValues.SetValues(customer);
-        await _context.SaveChangesAsync();
+            _context.Entry(customerModel).CurrentValues.SetValues(customer);
+            await _context.SaveChangesAsync();
+            
+            return Result.Success();
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Erro de banco de dados.");
+            return Result.Fail("Erro de banco de dados.", ErrorType.Database);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro inesperado.");
+            return Result.Fail("Erro inesperado.", ErrorType.Unknown);
+        }
+        
     }
 }

@@ -1,5 +1,8 @@
 using Application.UseCases.Customers.Find.Output;
+using Domain.Exceptions;
 using Domain.Repositories;
+using Shared.Enums;
+using Shared.Utils;
 
 namespace Application.UseCases.Customers.Find;
 
@@ -12,9 +15,22 @@ public class FindCustomerInteractor : IFindCustomerUseCase
         _customerRepository = customerRepository;
     }
     
-    public async Task<FindCustomerOutput?> ExecuteAsync(Guid customerId)
+    public async Task<Result<FindCustomerOutput?>> ExecuteAsync(Guid customerId)
     {
-        var customer = await _customerRepository.FindByIdAsync(customerId);
-        return customer == null ? null : new FindCustomerOutput(customer.Id, customer.Name, customer.Email);
+        try
+        {
+            var result = await _customerRepository.FindByIdAsync(customerId);
+            
+            if(result.IsFailure) 
+                return Result<FindCustomerOutput?>.Fail(result.ErrorMessage!, result.ErrorType ?? ErrorType.Unknown);
+
+            var customerOutput = new FindCustomerOutput(result.Value!.Id, result.Value!.Name, result.Value!.Email);
+            return Result<FindCustomerOutput?>.Success(customerOutput);
+        }
+        catch (DomainValidationException ex)
+        {
+            return Result<FindCustomerOutput?>.FailValidation(
+                new Dictionary<string, List<string>>(ex.ValidationErrors));
+        }
     }
 }

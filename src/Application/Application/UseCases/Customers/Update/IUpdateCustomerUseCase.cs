@@ -1,8 +1,9 @@
 using Application.UseCases.Customers.Update.Input;
+using Shared.Utils;
 
 namespace Application.UseCases.Customers.Update;
 
 public interface IUpdateCustomerUseCase
 {
-    Task ExecuteAsync(Guid customerId, UpdateCustomerInput? input);
+    Task<Result> ExecuteAsync(Guid customerId, UpdateCustomerInput? input);
 }
