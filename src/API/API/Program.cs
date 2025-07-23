@@ -1,3 +1,4 @@
+using API.Middlewares;
 using API.Swagger;
 using Microsoft.AspNetCore.Mvc;
 using Application.DependencyInjection;
