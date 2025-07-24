@@ -9,7 +9,7 @@ using Shared.Utils;
 
 namespace Application.UseCases.Customers.Update;
 
-public class UpdateCustomerInteractor(
+public sealed class UpdateCustomerInteractor(
     ILogger<UpdateCustomerInteractor> logger,
     ICustomerRepository customerRepository,
     IEventPublisher eventPublisher) : IUpdateCustomerUseCase
@@ -17,27 +17,26 @@ public class UpdateCustomerInteractor(
     private const string DomainExceptionMessage = "Erro de validação de domínio ao criar cliente.";
     private const string InfrastructureExceptionMessage = "Erro interno inesperado ao criar cliente.";
     private const string InternalExceptionMessage = "Ocorreu um erro interno. Tente novamente mais tarde.";
-    
+    private const string ResourceNotFoundExceptionMessage = "Recurso não encontrado.";
+
     public async Task<Result<bool>> ExecuteAsync(Guid customerId, UpdateCustomerInput? input)
     {
         try
         {
             var result = await customerRepository.FindByIdAsync(customerId);
 
-            if (result.IsFailure)
-                return Result.FromError<bool>(result);
-
             if (result.Value == null)
-                return Result<bool>.Fail(result.ErrorMessage!, ErrorType.NotFound);
+                return Result<bool>.Fail(ResourceNotFoundExceptionMessage, ErrorType.NotFound);
 
             var customer = result.Value;
 
             if (input != null) customer.UpdateName(input.Name);
+
             await customerRepository.UpdateAsync(customer);
 
             var customerUpdatedEvent = new CustomerUpdatedEvent
             {
-                CustomerId = customerId,
+                CustomerId = customer.Id,
                 Name = customer.Name
             };
 
@@ -47,7 +46,7 @@ public class UpdateCustomerInteractor(
         catch (DomainValidationException ex)
         {
             logger.LogError(ex, DomainExceptionMessage);
-            return Result<bool>.FailValidation(new Dictionary<string, List<string>>(ex.ValidationErrors));
+            return Result<bool>.FailValidation(new List<string>(ex.Errors));
         }
         catch (Exception ex)
         {

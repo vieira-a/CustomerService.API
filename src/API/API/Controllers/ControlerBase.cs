@@ -6,7 +6,7 @@ namespace API.Controllers
     [ApiController]
     [ApiVersion(Version)]
     [Route(Route)]
-    public abstract class ControlerBase : Microsoft.AspNetCore.Mvc.ControllerBase
+    public abstract class ControlerBase : ControllerBase
     {
         protected readonly ILogger Logger;
 

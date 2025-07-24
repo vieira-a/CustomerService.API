@@ -1,11 +1,10 @@
 namespace API.Presenter.Responses;
 
-public class NotFoundProblemDetails : ProblemDetails
+public sealed class NotFoundProblemDetails : ProblemDetails
 {
     public NotFoundProblemDetails()
     {
-        Title = "Not found";
+        Title = "NOT_FOUND";
         Status = StatusCodes.Status404NotFound;
-        Detail = "Recurso não encontrado.";
     }
 }

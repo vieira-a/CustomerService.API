@@ -15,6 +15,11 @@ public sealed class Customer : Entity
 
     public IReadOnlyCollection<Address> Addresses => _addresses.AsReadOnly();
 
+    private const string EmptyNameExceptionMessage = "O nome do cliente é obrigatório.";
+    private const string InvalidNameExceptionMessage = "O nome do cliente deve conter pelo menos dois dígitos.";
+    private const string EmptyEmailExceptionMessage = "O e-mail do cliente é obrigatório.";
+    private const string InvalidEmailExceptionMessage = "O e-mail do cliente está com formato inválido.";
+
     private Customer(string name, string email)
     {
         Name = name;
@@ -53,21 +58,16 @@ public sealed class Customer : Entity
 
     private void Validate()
     {
-        var errors = new Dictionary<string, List<string>>();
+        var errors = new List<string>();
 
-        if (string.IsNullOrWhiteSpace(Name))
-            errors.Add("Name", [ "Nome não pode ser vazio." ]);
+        if (string.IsNullOrEmpty(Name)) errors.Add(EmptyNameExceptionMessage);
 
-        if (Name.Length < 2)
-            errors.Add("Name", [ "Nome deve ter pelo menos 2 caracteres." ]);
+        if (!string.IsNullOrEmpty(Name) && Name.Length < 2) errors.Add(InvalidNameExceptionMessage);
 
-        if (string.IsNullOrWhiteSpace(Email))
-            errors.Add("Email", [ "Email não pode ser vazio." ]);
+        if (string.IsNullOrWhiteSpace(Email)) errors.Add(EmptyEmailExceptionMessage);
 
-        if (!EmailRegex.IsMatch(Email))
-            errors.Add("Email", [ "Email em formato inválido." ]);
+        else if (!EmailRegex.IsMatch(Email)) errors.Add(InvalidEmailExceptionMessage);
 
-        if (errors.Count != 0)
-            throw new DomainValidationException(errors);
+        if (errors.Count != 0) throw new DomainValidationException(errors);
     }
 }

@@ -14,6 +14,12 @@ public sealed class Address : Entity
 
     public string Country { get; private set; }
 
+    private const string EmptyStreetException = "O nome da rua é obrigatório.";
+    private const string EmptyCityException = "O nome da cidade é obrigatório.";
+    private const string EmptyZipCodeException = "O CEP é obrigatório.";
+    private const string EmptyCountryException = "O nome do país é obrigatório.";
+    private const string EmptyStateException = "O nome do estado é obrigatório.";
+
     private Address(string street, string city, string state, string zipCode, string country)
     {
         Street = street;
@@ -31,24 +37,18 @@ public sealed class Address : Entity
 
     private void Validate()
     {
-        var errors = new Dictionary<string, List<string>>();
+        var errors = new List<string>();
 
-        if (string.IsNullOrWhiteSpace(Street))
-            errors.Add("Street", [ "Rua deve ser informada." ]);
+        if (string.IsNullOrWhiteSpace(Street)) errors.Add(EmptyStreetException);
 
-        if (string.IsNullOrWhiteSpace(City))
-            errors.Add("City", [ "Cidade deve ser informada." ]);
+        if (string.IsNullOrWhiteSpace(City)) errors.Add(EmptyCityException);
 
-        if (string.IsNullOrWhiteSpace(State))
-            errors.Add("State", [ "Estado deve ser informado." ]);
+        if (string.IsNullOrWhiteSpace(State)) errors.Add(EmptyStateException);
 
-        if (string.IsNullOrWhiteSpace(ZipCode))
-            errors.Add("ZipCode", [ "CEP deve ser informado." ]);
+        if (string.IsNullOrWhiteSpace(ZipCode)) errors.Add(EmptyZipCodeException);
 
-        if (string.IsNullOrWhiteSpace(Country))
-            errors.Add("Country", [ "País deve ser informado." ]);
+        if (string.IsNullOrWhiteSpace(Country)) errors.Add(EmptyCountryException);
 
-        if (errors.Count != 0)
-            throw new DomainValidationException(errors);
+        if (errors.Count != 0) throw new DomainValidationException(errors);
     }
 }

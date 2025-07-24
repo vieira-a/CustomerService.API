@@ -8,13 +8,13 @@ public class Result
     public bool IsFailure => !IsSuccess;
     public string? ErrorMessage { get; }
     public ErrorType? ErrorType { get; }
-    public Dictionary<string, List<string>>? ValidationErrors { get; protected set; }
+    public List<string>? ValidationErrors { get; protected init; }
 
     protected Result(
         bool isSuccess,
         string? errorMessage,
         ErrorType? errorType,
-        Dictionary<string, List<string>>? validationErrors = null
+        List<string>? validationErrors = null
         )
     {
         IsSuccess = isSuccess;
@@ -25,7 +25,7 @@ public class Result
 
     public static Result Success() => new(true, null, null);
     public static Result Fail(string? errorMessage, ErrorType? errorType) => new(false, errorMessage, errorType);
-    public static Result FailValidation(Dictionary<string, List<string>> validationErrors) =>
+    public static Result FailValidation(List<string> validationErrors) =>
         new(false, "Erro de validação", Enums.ErrorType.Validation, validationErrors);
 
     public static Result<T> FromError<T>(Result result)
@@ -43,7 +43,7 @@ public class Result<T> : Result
         bool isSuccess,
         string? errorMessage,
         ErrorType? errorType,
-        Dictionary<string, List<string>>? validationErrors = null
+        List<string>? validationErrors = null
         )
         : base(isSuccess, errorMessage, errorType, validationErrors)
     {
@@ -53,6 +53,13 @@ public class Result<T> : Result
     public static Result<T> Success(T data) => new(data, true, null, null);
     public static Result<T> Fail(string errorMessage, ErrorType errorType) =>
         new(default, false, errorMessage, errorType);
-    public new static Result<T> FailValidation(Dictionary<string, List<string>> validationErrors) =>
-        new(default, false, "Erro de validação.", Enums.ErrorType.Validation, validationErrors);
+    public static Result<T> FailValidation(IEnumerable<string> errors)
+    {
+        return new Result<T>(
+            default,
+            false,
+            "Erro de validação",
+            Enums.ErrorType.Validation,
+            errors.ToList());
+    }
 }

@@ -1,14 +1,14 @@
 namespace API.Presenter.Responses;
 
-public class ValidationProblemDetails : ProblemDetails
+public sealed class ValidationProblemDetails : ProblemDetails
 {
     public ValidationProblemDetails()
     {
-        Title = "Validation Error";
+        Title = "VALIDATION";
         Status = StatusCodes.Status400BadRequest;
         Detail = "Ocorreram um ou mais erros de validação.";
-        Errors = new Dictionary<string, string[]>();
+        Errors = [ ];
     }
 
-    public sealed override Dictionary<string, string[]>? Errors { get; set; }
+    public sealed override List<string>? Errors { get; set; }
 }

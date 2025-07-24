@@ -1,4 +1,3 @@
-using Application.Exceptions;
 using Application.Interfaces;
 using Application.UseCases.Customers.Create.Input;
 using Application.UseCases.Customers.Create.Output;
@@ -12,16 +11,14 @@ using Shared.Utils;
 
 namespace Application.UseCases.Customers.Create;
 
-public class CreateCustomerInteractor(
+public sealed class CreateCustomerInteractor(
     ILogger<CreateCustomerInteractor> logger,
     ICustomerRepository repository,
     IEventPublisher eventPublisher)
     : ICreateCustomerUseCase
 {
     private const string DomainExceptionMessage = "Erro de validação de domínio ao criar cliente.";
-    private const string InfrastructureExceptionMessage = "Erro interno inesperado ao criar cliente.";
     private const string InternalExceptionMessage = "Ocorreu um erro interno. Tente novamente mais tarde.";
-    private const string DatabaseExceptionMessage = "Ocorreu um erro no banco de dados.";
 
     public async Task<Result<CreateCustomerOutput>> ExecuteAsync(CreateCustomerInput input)
     {
@@ -40,10 +37,7 @@ public class CreateCustomerInteractor(
                 customer.AddAddress(address!);
             }
 
-            var result = await repository.CreateAsync(customer);
-
-            if (result.IsFailure)
-                return Result<CreateCustomerOutput>.Fail(result.ErrorMessage!, result.ErrorType ?? ErrorType.Unknown);
+            await repository.CreateAsync(customer);
 
             var customerCreatedEvent = new CustomerCreatedEvent
             {
@@ -61,17 +55,7 @@ public class CreateCustomerInteractor(
         {
             logger.LogError(ex, DomainExceptionMessage);
             return Result<CreateCustomerOutput>.FailValidation(
-                new Dictionary<string, List<string>>(ex.ValidationErrors));
-        }
-        catch (DatabaseException ex)
-        {
-            logger.LogError(ex, DatabaseExceptionMessage);
-            return Result<CreateCustomerOutput>.Fail(DatabaseExceptionMessage, ErrorType.Database);
-        }
-        catch (InternalServerException ex)
-        {
-            logger.LogError(ex, InfrastructureExceptionMessage);
-            return Result<CreateCustomerOutput>.Fail(InfrastructureExceptionMessage, ErrorType.Infrastructure);
+                new List<string>(ex.Errors));
         }
         catch (Exception ex)
         {
@@ -89,13 +73,13 @@ public class CreateCustomerInteractor(
         }
         catch (DomainValidationException ex)
         {
-            logger.LogError(DomainExceptionMessage);
+            logger.LogError(ex, DomainExceptionMessage);
             return Result<Address>.FailValidation(
-                new Dictionary<string, List<string>>(ex.ValidationErrors));
+                new List<string>(ex.Errors));
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, InfrastructureExceptionMessage);
+            logger.LogError(ex, InternalExceptionMessage);
             return Result<Address>.Fail(InternalExceptionMessage, ErrorType.Internal);
         }
     }

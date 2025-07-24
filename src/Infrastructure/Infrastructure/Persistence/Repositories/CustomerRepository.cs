@@ -1,4 +1,3 @@
-using Application.Exceptions;
 using Domain.Entities;
 using Domain.Repositories;
 using Infrastructure.Persistence.Contexts;
@@ -30,13 +29,13 @@ public class CustomerRepository(ILogger<CustomerRepository> logger, CustomerDbCo
         catch (DbUpdateException ex)
         {
             logger.LogError(ex, DatabaseExceptionMessage);
-            throw new DatabaseException(DatabaseExceptionMessage);
+            return Result.Fail(DatabaseExceptionMessage, ErrorType.Database);
         }
 
         catch (Exception ex)
         {
             logger.LogError(ex, InternalExceptionMessage);
-            throw new InternalServerException(InternalExceptionMessage);
+            return Result.Fail(InternalExceptionMessage, ErrorType.Internal);
         }
     }
 
@@ -52,12 +51,12 @@ public class CustomerRepository(ILogger<CustomerRepository> logger, CustomerDbCo
         catch (DbUpdateException ex)
         {
             logger.LogError(ex, DatabaseExceptionMessage);
-            throw new DatabaseException(DatabaseExceptionMessage);
+            return Result<Customer?>.Fail(DatabaseExceptionMessage, ErrorType.Database);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, InternalExceptionMessage);
-            throw new InternalServerException(InternalExceptionMessage);
+            return Result<Customer?>.Fail(InternalExceptionMessage, ErrorType.Internal);
         }
     }
 
@@ -77,12 +76,12 @@ public class CustomerRepository(ILogger<CustomerRepository> logger, CustomerDbCo
         catch (DbUpdateException ex)
         {
             logger.LogError(ex, DatabaseExceptionMessage);
-            throw new DatabaseException(DatabaseExceptionMessage);
+            return Result<bool>.Fail(DatabaseExceptionMessage, ErrorType.Database);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, InternalExceptionMessage);
-            throw new InternalServerException(InternalExceptionMessage);
+            return Result<bool>.Fail(InternalExceptionMessage, ErrorType.Internal);
         }
     }
 }
