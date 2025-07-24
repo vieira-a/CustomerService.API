@@ -8,41 +8,34 @@ using Shared.Utils;
 
 namespace Application.UseCases.Customers.Update;
 
-public class UpdateCustomerInteractor : IUpdateCustomerUseCase
+public class UpdateCustomerInteractor(
+    ICustomerRepository customerRepository,
+    IEventPublisher eventPublisher) : IUpdateCustomerUseCase
 {
-    private readonly ICustomerRepository _customerRepository;
-    private readonly IEventPublisher _eventPublisher;
-
-    public UpdateCustomerInteractor(ICustomerRepository customerRepository, IEventPublisher eventPublisher)
-    {
-        _customerRepository = customerRepository;
-        _eventPublisher = eventPublisher;
-    }
-
     public async Task<Result<bool>> ExecuteAsync(Guid customerId, UpdateCustomerInput? input)
     {
         try
         {
-            var result = await _customerRepository.FindByIdAsync(customerId);
+            var result = await customerRepository.FindByIdAsync(customerId);
 
             if (result.IsFailure)
                 return Result.FromError<bool>(result);
-            
-            if(result.Value == null)
+
+            if (result.Value == null)
                 return Result<bool>.Fail(result.ErrorMessage!, ErrorType.NotFound);
 
             var customer = result.Value;
-        
+
             if (input != null) customer.UpdateName(input.Name);
-            await _customerRepository.UpdateAsync(customer);
+            await customerRepository.UpdateAsync(customer);
 
             var customerUpdatedEvent = new CustomerUpdatedEvent
             {
                 CustomerId = customerId,
-                Name = customer.Name,
+                Name = customer.Name
             };
-        
-            await _eventPublisher.Publish(customerUpdatedEvent);
+
+            await eventPublisher.Publish(customerUpdatedEvent);
             return Result<bool>.Success(true);
         }
         catch (DomainValidationException ex)
