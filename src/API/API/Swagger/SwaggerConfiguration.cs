@@ -27,10 +27,10 @@ public static class SwaggerConfiguration
             if (File.Exists(xmlPath))
                 options.IncludeXmlComments(xmlPath);
         });
-        
+
         return services;
     }
-    
+
     public static WebApplication UseSwaggerDocumentation(this WebApplication app)
     {
         app.UseSwagger();

@@ -9,7 +9,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<AddressModel>
     public void Configure(EntityTypeBuilder<AddressModel> builder)
     {
         builder.ToTable("ADDRESSES");
-        
+
         builder.HasKey(a => a.AddressId);
 
         builder.Property(a => a.Street).HasMaxLength(200);

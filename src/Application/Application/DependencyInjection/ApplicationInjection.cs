@@ -10,11 +10,11 @@ public static class ApplicationInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddScoped<ICreateCustomerUseCase, CreateCustomerInteractor>();    
-        services.AddScoped<IFindCustomerUseCase, FindCustomerInteractor>(); 
+        services.AddScoped<ICreateCustomerUseCase, CreateCustomerInteractor>();
+        services.AddScoped<IFindCustomerUseCase, FindCustomerInteractor>();
         services.AddScoped<IUpdateCustomerUseCase, UpdateCustomerInteractor>();
 
         return services;
     }
-    
+
 }

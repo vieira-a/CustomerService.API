@@ -23,10 +23,10 @@ public static class PersistenceInjection
                                    $"User Id={settings.Username};" +
                                    $"Password={settings.Password};" +
                                    "TrustServerCertificate=true;";
-            
+
             options.UseSqlServer(connectionString);
         });
-        
+
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         return services;
     }

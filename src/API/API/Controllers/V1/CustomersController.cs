@@ -11,13 +11,13 @@ namespace API.Controllers.V1;
 
 public sealed class CustomersController : ControlerBase
 {
-    private readonly ICreateCustomerUseCase  _createCustomerInteractor;
+    private readonly ICreateCustomerUseCase _createCustomerInteractor;
     private readonly IFindCustomerUseCase _findCustomerInteractor;
     private readonly IUpdateCustomerUseCase _updateCustomerInteractor;
 
     public CustomersController(
-        ICreateCustomerUseCase createCustomerInteractor, 
-        IFindCustomerUseCase findCustomerInteractor, 
+        ICreateCustomerUseCase createCustomerInteractor,
+        IFindCustomerUseCase findCustomerInteractor,
         IUpdateCustomerUseCase updateCustomerInteractor,
         ILogger<CustomersController> logger
         ) : base(logger)
@@ -40,7 +40,7 @@ public sealed class CustomersController : ControlerBase
     public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
         var result = await _findCustomerInteractor.ExecuteAsync(id);
-        
+
         return result.ToResponse(HttpContext);
     }
 
@@ -49,10 +49,12 @@ public sealed class CustomersController : ControlerBase
     {
         if (request.Name == null)
             return NoContent();
-        
+
         var input = request.ToInput();
         var result = await _updateCustomerInteractor.ExecuteAsync(id, input);
 
-        return result.IsFailure ? Result.FromError<bool>(result).ToResponse(HttpContext) : result.ToResponse(HttpContext);
+        return result.IsFailure
+            ? Result.FromError<bool>(result).ToResponse(HttpContext)
+            : result.ToResponse(HttpContext);
     }
 }

@@ -1,11 +1,10 @@
-using Microsoft.Extensions.Logging;
-
 using Application.Interfaces;
 using Application.UseCases.Customers.Create.Input;
 using Application.UseCases.Customers.Create.Output;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Repositories;
+using Microsoft.Extensions.Logging;
 using Shared.Enums;
 using Shared.Messaging.Events;
 using Shared.Utils;
@@ -48,7 +47,7 @@ public class CreateCustomerInteractor(
             {
                 CustomerId = customer.Id,
                 Name = customer.Name,
-                Email = customer.Email,
+                Email = customer.Email
             };
 
             await eventPublisher.Publish(customerCreatedEvent);

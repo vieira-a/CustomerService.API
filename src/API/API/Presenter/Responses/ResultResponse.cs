@@ -19,7 +19,7 @@ public static class ResultResponse
             {
                 Instance = instancePath
             }),
-            
+
             ErrorType.Validation => new BadRequestObjectResult(new ValidationProblemDetails
             {
                 Instance = instancePath,

@@ -3,7 +3,8 @@
 ## Introdução
 
 Um microsserviço desenvolvido com .NET 8 seguindo princípios da Clean Architecture e DDD.
-Este projeto está em andamento, e o seu objetivo é servir como prova de conceito para aplicação de boas práticas de arquitetura utilizando ASP.NET Core.
+Este projeto está em andamento, e o seu objetivo é servir como prova de conceito para aplicação de boas práticas de
+arquitetura utilizando ASP.NET Core.
 
 ## Tecnologias
 
@@ -20,7 +21,8 @@ Este projeto está em andamento, e o seu objetivo é servir como prova de concei
 
 ### Aplicação da Clean Architecture
 
-Neste projeto, adotei Clean Architecture para garantir uma separação clara de responsabilidades, facilitar a manutenção, testabilidade e evolução.
+Neste projeto, adotei Clean Architecture para garantir uma separação clara de responsabilidades, facilitar a manutenção,
+testabilidade e evolução.
 
 #### Estrutura por camadas
 
@@ -32,39 +34,46 @@ Contém regras de negócio e entidades centrais. Não depende de nenhuma outra c
 
 **- Application**
 
-Responsável pelos casos de uso, orquestrando regras de negócio do domínio. Esta camada depende do domínio, mas é independente da infraestrutura.
+Responsável pelos casos de uso, orquestrando regras de negócio do domínio. Esta camada depende do domínio, mas é
+independente da infraestrutura.
 
 **- Infrastructure**
 
-Implementa detalhes técnicos de infraestrutura, como acesso ao banco de dados (via Entity Framework Core), mensageria (MassTransit com RabbitMQ), etc.
+Implementa detalhes técnicos de infraestrutura, como acesso ao banco de dados (via Entity Framework Core), mensageria (
+MassTransit com RabbitMQ), etc.
 
 **- API (Presentation)**
 
-Exposição da aplicação ASP.NET Core Web API. Trata requisições e faz o mapeamento para os casos de uso da camada de aplicação.
+Exposição da aplicação ASP.NET Core Web API. Trata requisições e faz o mapeamento para os casos de uso da camada de
+aplicação.
 
 ### Mensageria com RabbitMQ
 
-Neste projeto, implementei um sistema de mensageria utilizando RabbitMQ como broker de mensagens e MassTransit como lib de integração para publicação e consumo de eventos assíncronos entre microsserviços.
+Neste projeto, implementei um sistema de mensageria utilizando RabbitMQ como broker de mensagens e MassTransit como lib
+de integração para publicação e consumo de eventos assíncronos entre microsserviços.
 
 ### Padronização de Respostas com Result<T>
 
-Para garantir consistência, clareza e facilidade no tratamento de erros em toda a aplicação, foi implementado um sistema de resposta padronizada baseado no padrão Result<T>. Esse padrão encapsula os resultados das operações em objetos que indicam claramente sucesso ou falha, com mensagens e tipos de erro bem definidos.
+Para garantir consistência, clareza e facilidade no tratamento de erros em toda a aplicação, foi implementado um sistema
+de resposta padronizada baseado no padrão Result<T>. Esse padrão encapsula os resultados das operações em objetos que
+indicam claramente sucesso ou falha, com mensagens e tipos de erro bem definidos.
 
 ### Observabilidade e logs
 
-Implementei **Serilog** para logging estruturado, permitindo a rastreabilidade completa das requisições, eventos de domínio e operações das regras de negócio.
+Implementei **Serilog** para logging estruturado, permitindo a rastreabilidade completa das requisições, eventos de
+domínio e operações das regras de negócio.
 
 **Características**
 
 - Logs estruturados no formato JSON, ideais para ferramentas como Seq, Grafana Loki, ELK, etc.
 - Captura automática de:
-  - Caminho da requisição (RequestPath)
-  - Verbo HTTP (RequestMethod)
-  - Tempo de execução (Elapsed)
-  - Status code
-  - Exceções não tratadas
+    - Caminho da requisição (RequestPath)
+    - Verbo HTTP (RequestMethod)
+    - Tempo de execução (Elapsed)
+    - Status code
+    - Exceções não tratadas
 - Enriquecimento com contexto da aplicação:
-  - Application, MachineName, SourceContext, etc.
+    - Application, MachineName, SourceContext, etc.
 - Logs do tipo Information, Warning, Error, e Debug (apenas em Development)
 - Padrão seguro: sem logs sensíveis ou dados pessoais expostos
 

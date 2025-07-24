@@ -11,7 +11,7 @@ public static class InfrastructureInjection
     {
         services.AddPersistence(configuration);
         services.AddMessaging(configuration);
-        
+
         return services;
     }
 }

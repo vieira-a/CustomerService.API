@@ -9,6 +9,6 @@ public class ValidationProblemDetails : ProblemDetails
         Detail = "Ocorreram um ou mais erros de validação.";
         Errors = new Dictionary<string, string[]>();
     }
-    
+
     public sealed override Dictionary<string, string[]>? Errors { get; set; }
 }

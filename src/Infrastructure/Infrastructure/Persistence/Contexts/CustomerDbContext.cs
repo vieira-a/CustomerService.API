@@ -37,9 +37,9 @@ public sealed class CustomerDbContext : DbContext
         {
             if (entry.State == EntityState.Added)
             {
-                if(entry.State == default) 
+                if (entry.State == default)
                     entry.Entity.Created = DateTime.UtcNow;
-                
+
                 entry.Entity.Modified = DateTime.UtcNow;
             }
             else if (entry.State == EntityState.Modified)

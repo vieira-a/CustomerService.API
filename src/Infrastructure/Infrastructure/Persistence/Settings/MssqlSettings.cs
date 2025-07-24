@@ -7,5 +7,5 @@ public class MssqlSettings
     public string Database { get; init; } = null!;
     public string Username { get; init; } = null!;
     public string Password { get; init; } = null!;
-    
+
 }

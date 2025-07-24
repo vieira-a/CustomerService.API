@@ -11,10 +11,10 @@ namespace Infrastructure.Persistence.Repositories;
 
 public class CustomerRepository : ICustomerRepository
 {
-    private readonly ILogger <CustomerRepository> _logger;
-    private readonly CustomerDbContext  _context;
+    private readonly ILogger<CustomerRepository> _logger;
+    private readonly CustomerDbContext _context;
 
-    public CustomerRepository(ILogger <CustomerRepository> logger, CustomerDbContext context)
+    public CustomerRepository(ILogger<CustomerRepository> logger, CustomerDbContext context)
     {
         _logger = logger;
         _context = context;
@@ -25,7 +25,7 @@ public class CustomerRepository : ICustomerRepository
         try
         {
             var customerModel = CustomerMapper.MapFromDomain(customer);
-            
+
             _context.Customers.Add(customerModel);
             await _context.SaveChangesAsync();
             return Result.Success();
@@ -35,7 +35,7 @@ public class CustomerRepository : ICustomerRepository
             _logger.LogError(ex, "Erro de banco de dados.");
             return Result.Fail("Erro de banco de dados.", ErrorType.Database);
         }
-        
+
         catch (Exception ex)
         {
             _logger.LogError(ex, "Erro inesperado.");
@@ -49,7 +49,7 @@ public class CustomerRepository : ICustomerRepository
         {
             var customer = await _context.Customers.FindAsync(customerId);
             var mappedCustomer = customer == null ? null : CustomerMapper.MapFromEntity(customer);
-            
+
             return Result<Customer?>.Success(mappedCustomer);
         }
         catch (DbUpdateException ex)
@@ -69,12 +69,12 @@ public class CustomerRepository : ICustomerRepository
         try
         {
             var customerModel = await _context.Customers.FindAsync(customer.Id);
-            if (customerModel == null) 
+            if (customerModel == null)
                 return Result<bool>.Fail("Cliente não encontrado.", ErrorType.NotFound);
-        
+
             _context.Entry(customerModel).CurrentValues.SetValues(customer);
             await _context.SaveChangesAsync();
-            
+
             return Result<bool>.Success(true);
         }
         catch (DbUpdateException ex)
@@ -87,6 +87,6 @@ public class CustomerRepository : ICustomerRepository
             _logger.LogError(ex, "Erro inesperado.");
             return Result<bool>.Fail("Erro inesperado.", ErrorType.Unknown);
         }
-        
+
     }
 }

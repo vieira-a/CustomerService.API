@@ -7,7 +7,7 @@ using Shared.Utils;
 
 namespace Application.UseCases.Customers.Find;
 
-public class FindCustomerInteractor(ILogger logger, ICustomerRepository customerRepository) : IFindCustomerUseCase
+public class FindCustomerInteractor(ILogger<FindCustomerInteractor> logger, ICustomerRepository customerRepository) : IFindCustomerUseCase
 {
     private const string DomainExceptionMessage = "Erro de validação de domínio ao criar cliente.";
     private const string InfrastructureExceptionMessage = "Erro interno inesperado ao criar cliente.";

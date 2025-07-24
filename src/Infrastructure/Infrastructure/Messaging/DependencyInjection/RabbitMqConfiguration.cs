@@ -22,7 +22,7 @@ public static class RabbitMqConfiguration
             x.UsingRabbitMq((context, cfg) =>
             {
                 var rabbitMqSettings = context.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
-                
+
                 cfg.Host(rabbitMqSettings.Host, h =>
                 {
                     h.Username(rabbitMqSettings.Username);
@@ -32,7 +32,7 @@ public static class RabbitMqConfiguration
                 cfg.ConfigureEndpoints(context);
             });
         });
-        
+
         services.AddScoped<IEventPublisher, RabbitMqEventPublisher>();
         return services;
     }

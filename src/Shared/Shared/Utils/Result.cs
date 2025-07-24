@@ -10,7 +10,12 @@ public class Result
     public ErrorType? ErrorType { get; }
     public Dictionary<string, List<string>>? ValidationErrors { get; protected set; }
 
-    protected Result(bool isSuccess, string? errorMessage, ErrorType? errorType, Dictionary<string, List<string>>? validationErrors = null)
+    protected Result(
+        bool isSuccess,
+        string? errorMessage,
+        ErrorType? errorType,
+        Dictionary<string, List<string>>? validationErrors = null
+        )
     {
         IsSuccess = isSuccess;
         ErrorMessage = errorMessage;
@@ -33,14 +38,21 @@ public class Result<T> : Result
 {
     public T? Value { get; set; }
 
-    private Result(T? value, bool isSuccess, string? errorMessage, ErrorType? errorType, Dictionary<string, List<string>>? validationErrors = null)
+    private Result(
+        T? value,
+        bool isSuccess,
+        string? errorMessage,
+        ErrorType? errorType,
+        Dictionary<string, List<string>>? validationErrors = null
+        )
         : base(isSuccess, errorMessage, errorType, validationErrors)
     {
         Value = value;
     }
 
     public static Result<T> Success(T data) => new(data, true, null, null);
-    public static Result<T> Fail(string errorMessage, ErrorType errorType) => new(default, false, errorMessage, errorType);
+    public static Result<T> Fail(string errorMessage, ErrorType errorType) =>
+        new(default, false, errorMessage, errorType);
     public new static Result<T> FailValidation(Dictionary<string, List<string>> validationErrors) =>
         new(default, false, "Erro de validação.", Enums.ErrorType.Validation, validationErrors);
 }
