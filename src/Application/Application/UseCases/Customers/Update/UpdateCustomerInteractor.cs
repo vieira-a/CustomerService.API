@@ -1,6 +1,5 @@
 using Application.Interfaces;
 using Application.UseCases.Customers.Update.Input;
-using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Repositories;
 using Shared.Enums;
