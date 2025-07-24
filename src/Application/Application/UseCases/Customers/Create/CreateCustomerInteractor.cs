@@ -1,3 +1,4 @@
+using Application.Exceptions;
 using Application.Interfaces;
 using Application.UseCases.Customers.Create.Input;
 using Application.UseCases.Customers.Create.Output;
@@ -20,6 +21,7 @@ public class CreateCustomerInteractor(
     private const string DomainExceptionMessage = "Erro de validação de domínio ao criar cliente.";
     private const string InfrastructureExceptionMessage = "Erro interno inesperado ao criar cliente.";
     private const string InternalExceptionMessage = "Ocorreu um erro interno. Tente novamente mais tarde.";
+    private const string DatabaseExceptionMessage = "Ocorreu um erro no banco de dados.";
 
     public async Task<Result<CreateCustomerOutput>> ExecuteAsync(CreateCustomerInput input)
     {
@@ -61,9 +63,19 @@ public class CreateCustomerInteractor(
             return Result<CreateCustomerOutput>.FailValidation(
                 new Dictionary<string, List<string>>(ex.ValidationErrors));
         }
-        catch (Exception ex)
+        catch (DatabaseException ex)
+        {
+            logger.LogError(ex, DatabaseExceptionMessage);
+            return Result<CreateCustomerOutput>.Fail(DatabaseExceptionMessage, ErrorType.Database);
+        }
+        catch (InternalServerException ex)
         {
             logger.LogError(ex, InfrastructureExceptionMessage);
+            return Result<CreateCustomerOutput>.Fail(InfrastructureExceptionMessage, ErrorType.Infrastructure);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, InternalExceptionMessage);
             return Result<CreateCustomerOutput>.Fail(InternalExceptionMessage, ErrorType.Internal);
         }
     }

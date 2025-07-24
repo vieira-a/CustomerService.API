@@ -1,3 +1,4 @@
+using Application.Exceptions;
 using Domain.Entities;
 using Domain.Repositories;
 using Infrastructure.Persistence.Contexts;
@@ -9,16 +10,12 @@ using Shared.Utils;
 
 namespace Infrastructure.Persistence.Repositories;
 
-public class CustomerRepository : ICustomerRepository
+public class CustomerRepository(ILogger<CustomerRepository> logger, CustomerDbContext context)
+    : ICustomerRepository
 {
-    private readonly ILogger<CustomerRepository> _logger;
-    private readonly CustomerDbContext _context;
-
-    public CustomerRepository(ILogger<CustomerRepository> logger, CustomerDbContext context)
-    {
-        _logger = logger;
-        _context = context;
-    }
+    private const string DatabaseExceptionMessage = "Erro de banco de dados.";
+    private const string InternalExceptionMessage = "Ocorreu um erro interno. Tente novamente mais tarde.";
+    private const string ResourceNotFoundExceptionMessage = "Recurso não encontrado.";
 
     public async Task<Result> CreateAsync(Customer customer)
     {
@@ -26,20 +23,20 @@ public class CustomerRepository : ICustomerRepository
         {
             var customerModel = CustomerMapper.MapFromDomain(customer);
 
-            _context.Customers.Add(customerModel);
-            await _context.SaveChangesAsync();
+            context.Customers.Add(customerModel);
+            await context.SaveChangesAsync();
             return Result.Success();
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Erro de banco de dados.");
-            return Result.Fail("Erro de banco de dados.", ErrorType.Database);
+            logger.LogError(ex, DatabaseExceptionMessage);
+            throw new DatabaseException(DatabaseExceptionMessage);
         }
 
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Erro inesperado.");
-            return Result.Fail("Erro inesperado.", ErrorType.Unknown);
+            logger.LogError(ex, InternalExceptionMessage);
+            throw new InternalServerException(InternalExceptionMessage);
         }
     }
 
@@ -47,20 +44,20 @@ public class CustomerRepository : ICustomerRepository
     {
         try
         {
-            var customer = await _context.Customers.FindAsync(customerId);
+            var customer = await context.Customers.FindAsync(customerId);
             var mappedCustomer = customer == null ? null : CustomerMapper.MapFromEntity(customer);
 
             return Result<Customer?>.Success(mappedCustomer);
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Erro de banco de dados.");
-            return Result<Customer?>.Fail("Erro de banco de dados.", ErrorType.Database);
+            logger.LogError(ex, DatabaseExceptionMessage);
+            throw new DatabaseException(DatabaseExceptionMessage);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Erro inesperado.");
-            return Result<Customer?>.Fail("Erro inesperado.", ErrorType.Unknown);
+            logger.LogError(ex, InternalExceptionMessage);
+            throw new InternalServerException(InternalExceptionMessage);
         }
     }
 
@@ -68,25 +65,24 @@ public class CustomerRepository : ICustomerRepository
     {
         try
         {
-            var customerModel = await _context.Customers.FindAsync(customer.Id);
+            var customerModel = await context.Customers.FindAsync(customer.Id);
             if (customerModel == null)
-                return Result<bool>.Fail("Cliente não encontrado.", ErrorType.NotFound);
+                return Result<bool>.Fail(ResourceNotFoundExceptionMessage, ErrorType.NotFound);
 
-            _context.Entry(customerModel).CurrentValues.SetValues(customer);
-            await _context.SaveChangesAsync();
+            context.Entry(customerModel).CurrentValues.SetValues(customer);
+            await context.SaveChangesAsync();
 
             return Result<bool>.Success(true);
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Erro de banco de dados.");
-            return Result<bool>.Fail("Erro de banco de dados.", ErrorType.Database);
+            logger.LogError(ex, DatabaseExceptionMessage);
+            throw new DatabaseException(DatabaseExceptionMessage);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Erro inesperado.");
-            return Result<bool>.Fail("Erro inesperado.", ErrorType.Unknown);
+            logger.LogError(ex, InternalExceptionMessage);
+            throw new InternalServerException(InternalExceptionMessage);
         }
-
     }
 }
