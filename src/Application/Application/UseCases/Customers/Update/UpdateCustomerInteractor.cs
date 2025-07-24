@@ -2,6 +2,7 @@ using Application.Interfaces;
 using Application.UseCases.Customers.Update.Input;
 using Domain.Exceptions;
 using Domain.Repositories;
+using Microsoft.Extensions.Logging;
 using Shared.Enums;
 using Shared.Messaging.Events;
 using Shared.Utils;
@@ -9,9 +10,14 @@ using Shared.Utils;
 namespace Application.UseCases.Customers.Update;
 
 public class UpdateCustomerInteractor(
+    ILogger<UpdateCustomerInteractor> logger,
     ICustomerRepository customerRepository,
     IEventPublisher eventPublisher) : IUpdateCustomerUseCase
 {
+    private const string DomainExceptionMessage = "Erro de validação de domínio ao criar cliente.";
+    private const string InfrastructureExceptionMessage = "Erro interno inesperado ao criar cliente.";
+    private const string InternalExceptionMessage = "Ocorreu um erro interno. Tente novamente mais tarde.";
+    
     public async Task<Result<bool>> ExecuteAsync(Guid customerId, UpdateCustomerInput? input)
     {
         try
@@ -40,7 +46,13 @@ public class UpdateCustomerInteractor(
         }
         catch (DomainValidationException ex)
         {
+            logger.LogError(ex, DomainExceptionMessage);
             return Result<bool>.FailValidation(new Dictionary<string, List<string>>(ex.ValidationErrors));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, InfrastructureExceptionMessage);
+            return Result<bool>.Fail(InternalExceptionMessage, ErrorType.Internal);
         }
     }
 }
