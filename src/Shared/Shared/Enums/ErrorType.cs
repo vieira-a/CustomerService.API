@@ -5,5 +5,6 @@ public enum ErrorType
     Validation, 
     NotFound, 
     Database,
-    Unknown
+    Unknown,
+    Internal
 }

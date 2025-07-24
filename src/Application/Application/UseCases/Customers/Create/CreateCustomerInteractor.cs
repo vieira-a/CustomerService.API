@@ -12,19 +12,16 @@ using Shared.Utils;
 
 namespace Application.UseCases.Customers.Create;
 
-public class CreateCustomerInteractor : ICreateCustomerUseCase 
+public class CreateCustomerInteractor(
+    ILogger<CreateCustomerInteractor> logger,
+    ICustomerRepository repository,
+    IEventPublisher eventPublisher)
+    : ICreateCustomerUseCase
 {
-    private readonly ILogger <CreateCustomerInteractor> _logger;
-    private readonly ICustomerRepository _repository;
-    private readonly IEventPublisher  _eventPublisher;
+    private const string DomainExceptionMessage = "Erro de validação de domínio ao criar cliente.";
+    private const string InfrastructureExceptionMessage = "Erro interno inesperado ao criar cliente.";
+    private const string InternalExceptionMessage = "Ocorreu um erro interno. Tente novamente mais tarde.";
 
-    public CreateCustomerInteractor(ILogger <CreateCustomerInteractor> logger, ICustomerRepository repository, IEventPublisher  eventPublisher)
-    {
-        _logger = logger;
-        _repository = repository;
-        _eventPublisher = eventPublisher;
-    }
-    
     public async Task<Result<CreateCustomerOutput>> ExecuteAsync(CreateCustomerInput input)
     {
         try
@@ -37,12 +34,12 @@ public class CreateCustomerInteractor : ICreateCustomerUseCase
 
                 if (addressResult.IsFailure)
                     return Result<CreateCustomerOutput>.FailValidation(addressResult.ValidationErrors!);
-                
+
                 var address = addressResult.Value;
                 customer.AddAddress(address!);
             }
 
-            var result = await _repository.CreateAsync(customer);
+            var result = await repository.CreateAsync(customer);
 
             if (result.IsFailure)
                 return Result<CreateCustomerOutput>.Fail(result.ErrorMessage!, result.ErrorType ?? ErrorType.Unknown);
@@ -54,19 +51,25 @@ public class CreateCustomerInteractor : ICreateCustomerUseCase
                 Email = customer.Email,
             };
 
-            await _eventPublisher.Publish(customerCreatedEvent);
+            await eventPublisher.Publish(customerCreatedEvent);
 
             return Result<CreateCustomerOutput>.Success(
                 new CreateCustomerOutput(customer.Id, customer.Name, customer.Email));
         }
         catch (DomainValidationException ex)
         {
+            logger.LogError(ex, DomainExceptionMessage);
             return Result<CreateCustomerOutput>.FailValidation(
                 new Dictionary<string, List<string>>(ex.ValidationErrors));
         }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, InfrastructureExceptionMessage);
+            return Result<CreateCustomerOutput>.Fail(InternalExceptionMessage, ErrorType.Internal);
+        }
     }
 
-    private static Result<Address> CreateAddress(AddressInput input)
+    private Result<Address> CreateAddress(AddressInput input)
     {
         try
         {
@@ -75,8 +78,14 @@ public class CreateCustomerInteractor : ICreateCustomerUseCase
         }
         catch (DomainValidationException ex)
         {
+            logger.LogError(DomainExceptionMessage);
             return Result<Address>.FailValidation(
                 new Dictionary<string, List<string>>(ex.ValidationErrors));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, InfrastructureExceptionMessage);
+            return Result<Address>.Fail(InternalExceptionMessage, ErrorType.Internal);
         }
     }
 }
