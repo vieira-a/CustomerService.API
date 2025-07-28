@@ -1,20 +1,16 @@
 using Application.Interfaces;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Messaging.RabbitMQ;
 
-public class RabbitMqEventPublisher : IEventPublisher
+public class RabbitMqEventPublisher(ILogger<RabbitMqEventPublisher> logger, IPublishEndpoint publishEndpoint)
+    : IEventPublisher
 {
-    private readonly IPublishEndpoint _publishEndpoint;
-
-    public RabbitMqEventPublisher(IPublishEndpoint publishEndpoint)
-    {
-        _publishEndpoint = publishEndpoint;
-    }
 
     public Task Publish<TEvent>(TEvent eventPub) where TEvent : class
     {
-        Console.WriteLine($"Publishing event: {eventPub}");
-        return _publishEndpoint.Publish(eventPub);
+        logger.LogInformation("Publicando evento {@Event}", eventPub);
+        return publishEndpoint.Publish(eventPub);
     }
 }

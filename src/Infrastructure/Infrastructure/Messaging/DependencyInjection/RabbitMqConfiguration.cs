@@ -5,6 +5,7 @@ using Infrastructure.Messaging.RabbitMQ.Settings;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Messaging.DependencyInjection;
@@ -32,7 +33,7 @@ public static class RabbitMqConfiguration
                 cfg.ConfigureEndpoints(context);
             });
         });
-
+        
         services.AddScoped<IEventPublisher, RabbitMqEventPublisher>();
         return services;
     }
