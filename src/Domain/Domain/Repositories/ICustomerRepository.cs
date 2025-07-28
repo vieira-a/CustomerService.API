@@ -8,4 +8,5 @@ public interface ICustomerRepository
     Task<Result> CreateAsync(Customer customer);
     Task<Result<Customer?>> FindByIdAsync(Guid customerId);
     Task<Result<bool>> UpdateAsync(Customer customer);
+    Task<Result<bool>> DeleteAsync(Guid customerId);
 }

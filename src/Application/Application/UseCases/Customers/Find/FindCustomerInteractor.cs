@@ -19,6 +19,8 @@ public sealed class FindCustomerInteractor(ILogger<FindCustomerInteractor> logge
         try
         {
             var result = await customerRepository.FindByIdAsync(customerId);
+            Console.WriteLine("CUSTOMER VALUE");
+            Console.WriteLine(result.Value);
 
             if (result.Value == null)
                 return Result<FindCustomerOutput?>.Fail(ResourceNotFoundExceptionMessage, ErrorType.NotFound);

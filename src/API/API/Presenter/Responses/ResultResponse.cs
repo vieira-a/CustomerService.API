@@ -6,10 +6,26 @@ namespace API.Presenter.Responses
 {
     public static class ResultResponse
     {
-        public static IActionResult ToResponse<T>(this Result<T> result, HttpContext httpContext)
+        public static IActionResult ToResponse<T>(
+            this Result<T> result, 
+            HttpContext httpContext,
+            int? successStatus = null,
+            string? createdResourceLocation = null
+            )
         {
             if (result.IsSuccess)
-                return new OkObjectResult(result.Value);
+            {
+                if(createdResourceLocation is not null)
+                    return new CreatedResult(createdResourceLocation, result.Value);
+                
+                if(typeof(T) == typeof(bool))
+                    return new StatusCodeResult(successStatus ?? StatusCodes.Status204NoContent);
+
+                return new OkObjectResult(result.Value)
+                {
+                    StatusCode = successStatus ?? StatusCodes.Status200OK
+                };
+            }
 
             var instancePath = httpContext.Request.Path;
 
@@ -48,7 +64,7 @@ namespace API.Presenter.Responses
                 _ => new ObjectResult(new InfrastructureProblemDetails
                 {
                     Detail = result.ErrorMessage ?? "Ocorreu um erro inesperado. Tente novamente mais tarde.",
-                    Instance = instancePath
+                    Instance = instancePath,
                 })
             };
         }

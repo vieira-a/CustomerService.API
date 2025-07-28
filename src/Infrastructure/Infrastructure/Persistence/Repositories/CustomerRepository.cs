@@ -9,7 +9,7 @@ using Shared.Utils;
 
 namespace Infrastructure.Persistence.Repositories;
 
-public class CustomerRepository(ILogger<CustomerRepository> logger, CustomerDbContext context)
+public sealed class CustomerRepository(ILogger<CustomerRepository> logger, CustomerDbContext context)
     : ICustomerRepository
 {
     private const string DatabaseExceptionMessage = "Erro de banco de dados.";
@@ -69,6 +69,31 @@ public class CustomerRepository(ILogger<CustomerRepository> logger, CustomerDbCo
                 return Result<bool>.Fail(ResourceNotFoundExceptionMessage, ErrorType.NotFound);
 
             context.Entry(customerModel).CurrentValues.SetValues(customer);
+            await context.SaveChangesAsync();
+
+            return Result<bool>.Success(true);
+        }
+        catch (DbUpdateException ex)
+        {
+            logger.LogError(ex, DatabaseExceptionMessage);
+            return Result<bool>.Fail(DatabaseExceptionMessage, ErrorType.Database);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, InternalExceptionMessage);
+            return Result<bool>.Fail(InternalExceptionMessage, ErrorType.Internal);
+        }
+    }
+
+    public async Task<Result<bool>> DeleteAsync(Guid customerId)
+    {
+        try
+        {
+            var entity = await context.Customers.FindAsync(customerId);
+            if (entity == null)
+                return Result<bool>.Fail(ResourceNotFoundExceptionMessage, ErrorType.NotFound);
+
+            context.Customers.Remove(entity);
             await context.SaveChangesAsync();
 
             return Result<bool>.Success(true);

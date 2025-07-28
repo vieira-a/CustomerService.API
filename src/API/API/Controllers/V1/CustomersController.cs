@@ -1,6 +1,7 @@
 using API.Controllers.Requests;
 using API.Presenter.Responses;
 using Application.UseCases.Customers.Create;
+using Application.UseCases.Customers.Delete;
 using Application.UseCases.Customers.Find;
 using Application.UseCases.Customers.Update;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ public sealed class CustomersController(
     ICreateCustomerUseCase createCustomerInteractor,
     IFindCustomerUseCase findCustomerInteractor,
     IUpdateCustomerUseCase updateCustomerInteractor,
+    IDeleteCustomerUseCase  deleteCustomerInteractor,
     ILogger<CustomersController> logger)
     : ControlerBase(logger)
 {
@@ -42,6 +44,15 @@ public sealed class CustomersController(
         var input = request.ToInput();
         var result = await updateCustomerInteractor.ExecuteAsync(id, input);
 
+        return result.IsFailure
+            ? Result.FromError<bool>(result).ToResponse(HttpContext)
+            : result.ToResponse(HttpContext);
+    }
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete([FromRoute] Guid id)
+    {
+        var result = await deleteCustomerInteractor.ExecuteAsync(id);
+        
         return result.IsFailure
             ? Result.FromError<bool>(result).ToResponse(HttpContext)
             : result.ToResponse(HttpContext);
