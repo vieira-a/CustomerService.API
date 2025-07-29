@@ -4,10 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Contexts;
 
-public sealed class CustomerDbContext : DbContext
+public sealed class CustomerDbContext(DbContextOptions<CustomerDbContext> options) : DbContext(options)
 {
-    public CustomerDbContext(DbContextOptions<CustomerDbContext> options) : base(options) {}
-
     public DbSet<CustomerModel> Customers => Set<CustomerModel>();
     public DbSet<AddressModel> Addresses => Set<AddressModel>();
 

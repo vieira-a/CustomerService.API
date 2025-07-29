@@ -13,26 +13,30 @@ public sealed class Address : Entity
     public string ZipCode { get; private set; }
 
     public string Country { get; private set; }
+    
+    public bool IsMain { get; private set;}
 
     private const string EmptyStreetException = "O nome da rua é obrigatório.";
     private const string EmptyCityException = "O nome da cidade é obrigatório.";
     private const string EmptyZipCodeException = "O CEP é obrigatório.";
     private const string EmptyCountryException = "O nome do país é obrigatório.";
     private const string EmptyStateException = "O nome do estado é obrigatório.";
+    private const string EmptyMainAddressException = "É necessário informar se o endereço é o principal.";
 
-    private Address(string street, string city, string state, string zipCode, string country)
+    private Address(string street, string city, string state, string zipCode, string country, bool isMain)
     {
         Street = street;
         City = city;
         State = state;
         ZipCode = zipCode;
         Country = country;
+        IsMain = isMain;
         Validate();
     }
 
-    public static Address Create(string street, string city, string state, string zipCode, string country)
+    public static Address Create(string street, string city, string state, string zipCode, string country, bool isMain)
     {
-        return new Address(street, city, state, zipCode, country);
+        return new Address(street, city, state, zipCode, country, isMain);
     }
 
     private void Validate()
@@ -48,6 +52,8 @@ public sealed class Address : Entity
         if (string.IsNullOrWhiteSpace(ZipCode)) errors.Add(EmptyZipCodeException);
 
         if (string.IsNullOrWhiteSpace(Country)) errors.Add(EmptyCountryException);
+        
+        if(!IsMain) errors.Add(EmptyStateException);
 
         if (errors.Count != 0) throw new DomainValidationException(errors);
     }

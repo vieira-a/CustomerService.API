@@ -17,5 +17,6 @@ public class AddressConfiguration : IEntityTypeConfiguration<AddressModel>
         builder.Property(a => a.State).HasMaxLength(100);
         builder.Property(a => a.ZipCode).HasMaxLength(20);
         builder.Property(a => a.Country).HasMaxLength(100);
+        builder.Property(a => a.IsMain);
     }
 }

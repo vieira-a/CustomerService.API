@@ -28,7 +28,7 @@ public sealed class CreateCustomerInteractor(
 
             if (input.Address != null)
             {
-                var addressResult = CreateAddress(input.Address);
+                var addressResult = CreateFirstAddress(input.Address);
 
                 if (addressResult.IsFailure)
                     return Result<CreateCustomerOutput>.FailValidation(addressResult.ValidationErrors!);
@@ -64,11 +64,12 @@ public sealed class CreateCustomerInteractor(
         }
     }
 
-    private Result<Address> CreateAddress(AddressInput input)
+    private Result<Address> CreateFirstAddress(AddressInput input)
     {
         try
         {
-            var result = Address.Create(input.Street, input.City, input.State, input.ZipCode, input.Country);
+            var result = Address.Create(input.Street, input.City, input.State, input.ZipCode, input.Country,
+                true);
             return Result<Address>.Success(result);
         }
         catch (DomainValidationException ex)

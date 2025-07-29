@@ -20,6 +20,7 @@ public abstract class CustomerMapper
                 State = address.State,
                 ZipCode = address.ZipCode,
                 Country = address.Country,
+                IsMain = address.IsMain,
                 CustomerId = customer.Id
             }).ToList()
         };
