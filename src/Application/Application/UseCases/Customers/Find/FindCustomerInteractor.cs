@@ -23,7 +23,7 @@ public sealed class FindCustomerInteractor(ILogger<FindCustomerInteractor> logge
             Console.WriteLine(result.Value);
 
             if (result.Value == null)
-                return Result<FindCustomerOutput?>.Fail(ResourceNotFoundExceptionMessage, ErrorType.NotFound);
+                return Result<FindCustomerOutput?>.Fail(ResourceNotFoundExceptionMessage, EErrorType.NotFound);
 
             var customerOutput = new FindCustomerOutput(result.Value!.Id, result.Value!.Name, result.Value!.Email);
             return Result<FindCustomerOutput?>.Success(customerOutput);
@@ -37,7 +37,7 @@ public sealed class FindCustomerInteractor(ILogger<FindCustomerInteractor> logge
         catch (Exception ex)
         {
             logger.LogError(ex, InternalExceptionMessage);
-            return Result<FindCustomerOutput?>.Fail(InternalExceptionMessage, ErrorType.Internal);
+            return Result<FindCustomerOutput?>.Fail(InternalExceptionMessage, EErrorType.Internal);
         }
     }
 }

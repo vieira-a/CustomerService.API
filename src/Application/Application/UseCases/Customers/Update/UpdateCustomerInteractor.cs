@@ -26,7 +26,7 @@ public sealed class UpdateCustomerInteractor(
             var result = await customerRepository.FindByIdAsync(customerId);
 
             if (result.Value == null)
-                return Result<bool>.Fail(ResourceNotFoundExceptionMessage, ErrorType.NotFound);
+                return Result<bool>.Fail(ResourceNotFoundExceptionMessage, EErrorType.NotFound);
 
             var customer = result.Value;
 
@@ -51,7 +51,7 @@ public sealed class UpdateCustomerInteractor(
         catch (Exception ex)
         {
             logger.LogError(ex, InfrastructureExceptionMessage);
-            return Result<bool>.Fail(InternalExceptionMessage, ErrorType.Internal);
+            return Result<bool>.Fail(InternalExceptionMessage, EErrorType.Internal);
         }
     }
 }

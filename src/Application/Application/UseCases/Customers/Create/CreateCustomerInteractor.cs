@@ -60,7 +60,7 @@ public sealed class CreateCustomerInteractor(
         catch (Exception ex)
         {
             logger.LogError(ex, InternalExceptionMessage);
-            return Result<CreateCustomerOutput>.Fail(InternalExceptionMessage, ErrorType.Internal);
+            return Result<CreateCustomerOutput>.Fail(InternalExceptionMessage, EErrorType.Internal);
         }
     }
 
@@ -80,7 +80,7 @@ public sealed class CreateCustomerInteractor(
         catch (Exception ex)
         {
             logger.LogError(ex, InternalExceptionMessage);
-            return Result<Address>.Fail(InternalExceptionMessage, ErrorType.Internal);
+            return Result<Address>.Fail(InternalExceptionMessage, EErrorType.Internal);
         }
     }
 }

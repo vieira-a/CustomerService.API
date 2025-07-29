@@ -29,13 +29,13 @@ public sealed class CustomerRepository(ILogger<CustomerRepository> logger, Custo
         catch (DbUpdateException ex)
         {
             logger.LogError(ex, DatabaseExceptionMessage);
-            return Result.Fail(DatabaseExceptionMessage, ErrorType.Database);
+            return Result.Fail(DatabaseExceptionMessage, EErrorType.Database);
         }
 
         catch (Exception ex)
         {
             logger.LogError(ex, InternalExceptionMessage);
-            return Result.Fail(InternalExceptionMessage, ErrorType.Internal);
+            return Result.Fail(InternalExceptionMessage, EErrorType.Internal);
         }
     }
 
@@ -51,12 +51,12 @@ public sealed class CustomerRepository(ILogger<CustomerRepository> logger, Custo
         catch (DbUpdateException ex)
         {
             logger.LogError(ex, DatabaseExceptionMessage);
-            return Result<Customer?>.Fail(DatabaseExceptionMessage, ErrorType.Database);
+            return Result<Customer?>.Fail(DatabaseExceptionMessage, EErrorType.Database);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, InternalExceptionMessage);
-            return Result<Customer?>.Fail(InternalExceptionMessage, ErrorType.Internal);
+            return Result<Customer?>.Fail(InternalExceptionMessage, EErrorType.Internal);
         }
     }
 
@@ -66,7 +66,7 @@ public sealed class CustomerRepository(ILogger<CustomerRepository> logger, Custo
         {
             var customerModel = await context.Customers.FindAsync(customer.Id);
             if (customerModel == null)
-                return Result<bool>.Fail(ResourceNotFoundExceptionMessage, ErrorType.NotFound);
+                return Result<bool>.Fail(ResourceNotFoundExceptionMessage, EErrorType.NotFound);
 
             context.Entry(customerModel).CurrentValues.SetValues(customer);
             await context.SaveChangesAsync();
@@ -76,12 +76,12 @@ public sealed class CustomerRepository(ILogger<CustomerRepository> logger, Custo
         catch (DbUpdateException ex)
         {
             logger.LogError(ex, DatabaseExceptionMessage);
-            return Result<bool>.Fail(DatabaseExceptionMessage, ErrorType.Database);
+            return Result<bool>.Fail(DatabaseExceptionMessage, EErrorType.Database);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, InternalExceptionMessage);
-            return Result<bool>.Fail(InternalExceptionMessage, ErrorType.Internal);
+            return Result<bool>.Fail(InternalExceptionMessage, EErrorType.Internal);
         }
     }
 
@@ -91,7 +91,7 @@ public sealed class CustomerRepository(ILogger<CustomerRepository> logger, Custo
         {
             var entity = await context.Customers.FindAsync(customerId);
             if (entity == null)
-                return Result<bool>.Fail(ResourceNotFoundExceptionMessage, ErrorType.NotFound);
+                return Result<bool>.Fail(ResourceNotFoundExceptionMessage, EErrorType.NotFound);
 
             context.Customers.Remove(entity);
             await context.SaveChangesAsync();
@@ -101,12 +101,12 @@ public sealed class CustomerRepository(ILogger<CustomerRepository> logger, Custo
         catch (DbUpdateException ex)
         {
             logger.LogError(ex, DatabaseExceptionMessage);
-            return Result<bool>.Fail(DatabaseExceptionMessage, ErrorType.Database);
+            return Result<bool>.Fail(DatabaseExceptionMessage, EErrorType.Database);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, InternalExceptionMessage);
-            return Result<bool>.Fail(InternalExceptionMessage, ErrorType.Internal);
+            return Result<bool>.Fail(InternalExceptionMessage, EErrorType.Internal);
         }
     }
 }

@@ -32,7 +32,7 @@ public sealed class DeleteCustomerInteractor(
         catch (Exception ex)
         {
             logger.LogError(ex, InternalExceptionMessage);
-            return Result<bool>.Fail(InternalExceptionMessage, ErrorType.Internal);
+            return Result<bool>.Fail(InternalExceptionMessage, EErrorType.Internal);
         }
         
     }

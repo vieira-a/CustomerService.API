@@ -1,11 +1,10 @@
 namespace Shared.Enums;
 
-public enum ErrorType
+public enum EErrorType
 {
     Validation,
     NotFound,
     Database,
     Infrastructure,
-    Unknown,
     Internal
 }
