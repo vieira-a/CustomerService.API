@@ -5,15 +5,10 @@ namespace Domain.Entities;
 public sealed class Address : Entity
 {
     public string Street { get; private set; }
-
     public string City { get; private set; }
-
     public string State { get; private set; }
-
     public string ZipCode { get; private set; }
-
     public string Country { get; private set; }
-    
     public bool IsMain { get; private set;}
 
     private const string EmptyStreetException = "O nome da rua é obrigatório.";
@@ -23,6 +18,17 @@ public sealed class Address : Entity
     private const string EmptyStateException = "O nome do estado é obrigatório.";
     private const string EmptyMainAddressException = "É necessário informar se o endereço é o principal.";
 
+    private Address(Guid id, string street, string city, string state, string zipCode, string country, bool isMain)
+    {
+        Id = id;
+        Street = street;
+        City = city;
+        State = state;
+        ZipCode = zipCode;
+        Country = country;
+        IsMain = isMain;
+    }
+    
     private Address(string street, string city, string state, string zipCode, string country, bool isMain)
     {
         Street = street;
@@ -36,7 +42,20 @@ public sealed class Address : Entity
 
     public static Address Create(string street, string city, string state, string zipCode, string country, bool isMain)
     {
-        return new Address(street, city, state, zipCode, country, isMain);
+        return new Address(street, city, state, zipCode.Trim(), country,isMain);
+    }
+
+    public static Address Restore(
+        Guid id,
+        string street,
+        string city,
+        string state,
+        string zipCode,
+        string country,
+        bool isMain
+        )
+    {
+        return new Address(id, street, city, state, zipCode, country, isMain);
     }
 
     private void Validate()
@@ -53,7 +72,7 @@ public sealed class Address : Entity
 
         if (string.IsNullOrWhiteSpace(Country)) errors.Add(EmptyCountryException);
         
-        if(!IsMain) errors.Add(EmptyStateException);
+        if (!IsMain) errors.Add(EmptyMainAddressException);
 
         if (errors.Count != 0) throw new DomainValidationException(errors);
     }

@@ -1,5 +1,6 @@
 using Domain.Repositories;
 using Infrastructure.Persistence.Contexts;
+using Infrastructure.Persistence.Models;
 using Infrastructure.Persistence.Repositories;
 using Infrastructure.Persistence.Settings;
 using Microsoft.EntityFrameworkCore;

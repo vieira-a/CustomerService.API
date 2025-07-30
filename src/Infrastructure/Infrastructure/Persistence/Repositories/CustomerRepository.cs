@@ -2,6 +2,7 @@ using Domain.Entities;
 using Domain.Repositories;
 using Infrastructure.Persistence.Contexts;
 using Infrastructure.Persistence.Mappers;
+using Infrastructure.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Shared.Enums;
@@ -97,6 +98,45 @@ public sealed class CustomerRepository(ILogger<CustomerRepository> logger, Custo
             await context.SaveChangesAsync();
 
             return Result<bool>.Success(true);
+        }
+        catch (DbUpdateException ex)
+        {
+            logger.LogError(ex, DatabaseExceptionMessage);
+            return Result<bool>.Fail(DatabaseExceptionMessage, EErrorType.Database);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, InternalExceptionMessage);
+            return Result<bool>.Fail(InternalExceptionMessage, EErrorType.Internal);
+        }
+    }
+
+    public async Task<Customer?> FindWithAddressAsync(Guid customerId)
+    {
+        var model = await context.Customers
+            .Include(c => c.Addresses)
+            .FirstOrDefaultAsync(c => c.CustomerId == customerId);
+
+        return model == null ? null : CustomerMapper.MapFromEntity(model);
+    }
+
+    public async Task<Result> CreateAddressAsync(Guid customerId, Address address)
+    {
+        try
+        {
+            var model = await context.Customers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.CustomerId == customerId);
+
+            if (model is null)
+                Result.Fail(ResourceNotFoundExceptionMessage,  EErrorType.NotFound);
+
+            var addressModel = AddressModel.Create(address.Street, address.City, address.Country, address.ZipCode,
+                address.Country, address.IsMain, customerId);
+
+            context.Addresses.Add(addressModel);
+            var saved = await context.SaveChangesAsync();
+            return saved > 0 ? Result.Success() : Result.Fail(InternalExceptionMessage, EErrorType.Database);
         }
         catch (DbUpdateException ex)
         {

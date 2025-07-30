@@ -12,22 +12,41 @@ public abstract class CustomerMapper
             CustomerId = customer.Id,
             Name = customer.Name,
             Email = customer.Email,
-            Addresses = customer.Addresses.Select(address => new AddressModel
-            {
-                AddressId = address.Id == Guid.Empty ? Guid.NewGuid() : address.Id,
-                Street = address.Street,
-                City = address.City,
-                State = address.State,
-                ZipCode = address.ZipCode,
-                Country = address.Country,
-                IsMain = address.IsMain,
-                CustomerId = customer.Id
-            }).ToList()
+            Addresses = customer.Addresses.Select(address =>
+                AddressModel.Restore(
+                    address.Id == Guid.Empty ? Guid.NewGuid() : address.Id,
+                    address.Street,
+                    address.City,
+                    address.State,
+                    address.ZipCode,
+                    address.Country,
+                    address.IsMain,
+                    customer.Id
+                )
+            ).ToList()
         };
     }
 
     public static Customer? MapFromEntity(CustomerModel customer)
     {
-        return Customer.Restore(customer.CustomerId, customer.Name, customer.Email);
+        var customerEntity = Customer.Restore(customer.CustomerId, customer.Name, customer.Email);
+
+        if (customer.Addresses == null)
+            return customerEntity;
+
+        foreach (var addressModel in customer.Addresses)
+        {
+            var address = Address.Restore(
+                addressModel.AddressId,
+                addressModel.Street,
+                addressModel.City,
+                addressModel.State,
+                addressModel.ZipCode,
+                addressModel.Country,
+                addressModel.IsMain);
+
+            customerEntity?.RestoreAddress(address);
+        }
+        return customerEntity;
     }
 }

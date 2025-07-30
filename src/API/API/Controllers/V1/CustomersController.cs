@@ -1,6 +1,8 @@
 using API.Controllers.Requests;
 using API.Presenter.Responses;
 using Application.UseCases.Customers.Create;
+using Application.UseCases.Customers.Create.Input;
+using Application.UseCases.Customers.CreateAddress;
 using Application.UseCases.Customers.Delete;
 using Application.UseCases.Customers.Find;
 using Application.UseCases.Customers.Update;
@@ -13,7 +15,8 @@ public sealed class CustomersController(
     ICreateCustomerUseCase createCustomerInteractor,
     IFindCustomerUseCase findCustomerInteractor,
     IUpdateCustomerUseCase updateCustomerInteractor,
-    IDeleteCustomerUseCase  deleteCustomerInteractor,
+    IDeleteCustomerUseCase deleteCustomerInteractor,
+    ICreateAddressUseCase createAddressInteractor,
     ILogger<CustomersController> logger)
     : ControlerBase(logger)
 {
@@ -48,6 +51,7 @@ public sealed class CustomersController(
             ? Result.FromError<bool>(result).ToResponse(HttpContext)
             : result.ToResponse(HttpContext);
     }
+    
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
@@ -56,5 +60,12 @@ public sealed class CustomersController(
         return result.IsFailure
             ? Result.FromError<bool>(result).ToResponse(HttpContext)
             : result.ToResponse(HttpContext);
+    }
+    
+    [HttpPost("{id:guid}")]
+    public async Task<IActionResult> CreateAddress([FromRoute] Guid id, [FromBody] AddressInput request)
+    {
+        var result = await createAddressInteractor.ExecuteAsync(id, request);
+        return result.ToResponse(HttpContext);
     }
 }
